@@ -2207,6 +2207,13 @@
             
             // Add active to clicked nav item
             event.target.closest('.nav-item').classList.add('active');
+            
+            // Redraw charts when navigating to analytics or sustainability pages
+            if (pageId === 'analytics') {
+                setTimeout(() => drawSpendingChart('12'), 100);
+            } else if (pageId === 'sustainability') {
+                setTimeout(() => drawCarbonChart('12'), 100);
+            }
         }
         
         function toggleChat() {
