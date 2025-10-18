@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CES Power Pro - Customer Portal</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-section">
+            <div class="logo">⚡ CES POWER PRO</div>
+        </div>
+        <div class="user-section">
+            <div class="notifications">
+                🔔
+                <div class="notification-badge">3</div>
+            </div>
+            <div class="user-profile">
+                <div>
+                    <div style="font-weight: 600;">Sarah Chen</div>
+                    <div style="font-size: 0.85em; opacity: 0.8;">Momentum Events</div>
+                </div>
+                <div class="avatar">SC</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="nav-section-title">Main</div>
+            <div class="nav-item active" onclick="showPage('dashboard')">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="showPage('ai-recommendations')">
+                <span class="nav-icon">🤖</span>
+                <span>AI Recommendations</span>
+            </div>
+            <div class="nav-item" onclick="showPage('quick-quote')">
+                <span class="nav-icon">⚡</span>
+                <span>Quick Quote</span>
+            </div>
+            <div class="nav-item" onclick="showPage('my-events')">
+                <span class="nav-icon">🎪</span>
+                <span>My Events</span>
+            </div>
+            <div class="nav-item" onclick="showPage('live-monitoring')">
+                <span class="nav-icon">📡</span>
+                <span>Live Monitoring</span>
+            </div>
+            
+            <div class="nav-section-title">Resources</div>
+            <div class="nav-item" onclick="showPage('equipment')">
+                <span class="nav-icon">🔌</span>
+                <span>Equipment Catalog</span>
+            </div>
+            <div class="nav-item" onclick="showPage('analytics')">
+                <span class="nav-icon">📈</span>
+                <span>Analytics & Reports</span>
+            </div>
+            <div class="nav-item" onclick="showPage('sustainability')">
+                <span class="nav-icon">🌍</span>
+                <span>Sustainability</span>
+            </div>
+            
+            <div class="nav-section-title">Account</div>
+            <div class="nav-item" onclick="showPage('billing')">
+                <span class="nav-icon">💳</span>
+                <span>Billing</span>
+            </div>
+            <div class="nav-item" onclick="showPage('team')">
+                <span class="nav-icon">👥</span>
+                <span>Team</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span>Settings</span>
+            </div>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page active">
+                <div class="page-header">
+                    <h1 class="page-title">Welcome back, Sarah! 👋</h1>
+                    <p class="page-subtitle">Here's what's happening with your events</p>
+                </div>
+                
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Active Deployments</div>
+                        <div class="stat-value">7</div>
+                        <div class="stat-change">
+                            <span>↗</span>
+                            <span>Running smoothly</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card green">
+                        <div class="stat-label">Upcoming Events</div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-change">
+                            <span>📅</span>
+                            <span>Next 30 days</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card purple">
+                        <div class="stat-label">Carbon Saved (YTD)</div>
+                        <div class="stat-value">47.3t</div>
+                        <div class="stat-change">
+                            <span>🌱</span>
+                            <span>vs. diesel only</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card orange">
+                        <div class="stat-label">Total Savings (YTD)</div>
+                        <div class="stat-value">$23.4K</div>
+                        <div class="stat-change">
+                            <span>💰</span>
+                            <span>vs. list price</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Quick Actions</h2>
+                    </div>
+                    <div class="quick-actions">
+                        <div class="quick-action" onclick="showPage('quick-quote')">
+                            <div class="quick-action-icon">⚡</div>
+                            <div class="quick-action-label">Get Instant Quote</div>
+                        </div>
+                        <div class="quick-action">
+                            <div class="quick-action-icon">📅</div>
+                            <div class="quick-action-label">Schedule Site Visit</div>
+                        </div>
+                        <div class="quick-action">
+                            <div class="quick-action-icon">📋</div>
+                            <div class="quick-action-label">Duplicate Past Event</div>
+                        </div>
+                        <div class="quick-action">
+                            <div class="quick-action-icon">📊</div>
+                            <div class="quick-action-label">Download Report</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Active Events -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Active Events Requiring Attention</h2>
+                        <button class="btn btn-outline">View All</button>
+                    </div>
+                    
+                    <div style="display: grid; gap: 15px;">
+                        <div class="event-card">
+                            <div class="event-header">
+                                <div>
+                                    <div class="event-title">🎸 Austin Music Festival</div>
+                                    <div class="event-date">📅 Oct 18-20, 2025</div>
+                                </div>
+                                <div class="event-status status-active">● LIVE NOW</div>
+                            </div>
+                            <div class="event-details">
+                                <div class="event-detail">
+                                    <span>⚡</span>
+                                    <span>4x 500kW Hybrid Generators</span>
+                                </div>
+                                <div class="event-detail">
+                                    <span>📍</span>
+                                    <span>Zilker Park, Austin TX</span>
+                                </div>
+                                <div class="event-detail">
+                                    <span>👤</span>
+                                    <span>8,500 attendees</span>
+                                </div>
+                            </div>
+                            <div style="margin: 15px 0;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-size: 0.9em; color: #64748b;">Equipment Health</span>
+                                    <span style="font-weight: 600; color: #10b981;">98.7%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 98.7%; background: linear-gradient(90deg, #10b981, #06b6d4);"></div>
+                                </div>
+                            </div>
+                            <div class="event-footer">
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="btn btn-primary" onclick="showPage('live-monitoring')">📡 View Live Data</button>
+                                    <button class="btn btn-outline">💬 Contact Tech</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="event-card">
+                            <div class="event-header">
+                                <div>
+                                    <div class="event-title">🎬 Downtown Film Production</div>
+                                    <div class="event-date">📅 Oct 19-22, 2025</div>
+                                </div>
+                                <div class="event-status status-active">● LIVE NOW</div>
+                            </div>
+                            <div class="event-details">
+                                <div class="event-detail">
+                                    <span>🔋</span>
+                                    <span>2x Battery Storage Units (Silent)</span>
+                                </div>
+                                <div class="event-detail">
+                                    <span>📍</span>
+                                    <span>Downtown Dallas TX</span>
+                                </div>
+                            </div>
+                            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; border-radius: 8px; margin: 15px 0;">
+                                <div style="display: flex; align-items: start; gap: 10px;">
+                                    <span style="font-size: 1.2em;">⚠️</span>
+                                    <div>
+                                        <div style="font-weight: 600; color: #92400e; margin-bottom: 5px;">AI Alert: Battery Low</div>
+                                        <div style="font-size: 0.9em; color: #78350f;">Unit #2 at 15% capacity. Backup generator auto-deployed. No impact to production.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="event-footer">
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="btn btn-primary">📡 View Details</button>
+                                    <button class="btn btn-success">✅ Acknowledge</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Upcoming Events -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Upcoming Events (Next 7 Days)</h2>
+                    </div>
+                    
+                    <div style="display: grid; gap: 15px;">
+                        <div class="event-card">
+                            <div class="event-header">
+                                <div>
+                                    <div class="event-title">💍 Lakeside Wedding Ceremony</div>
+                                    <div class="event-date">📅 Oct 21, 2025 (3 days)</div>
+                                </div>
+                                <div class="event-status status-upcoming">UPCOMING</div>
+                            </div>
+                            <div class="event-details">
+                                <div class="event-detail">
+                                    <span>⚡</span>
+                                    <span>1x 150kW Hybrid Generator</span>
+                                </div>
+                                <div class="event-detail">
+                                    <span>📍</span>
+                                    <span>Lake Travis, Austin TX</span>
+                                </div>
+                                <div class="event-detail">
+                                    <span>👤</span>
+                                    <span>250 guests</span>
+                                </div>
+                            </div>
+                            <div style="background: #dbeafe; border-left: 4px solid #3b82f6; padding: 12px; border-radius: 8px; margin: 15px 0;">
+                                <div style="display: flex; align-items: start; gap: 10px;">
+                                    <span style="font-size: 1.2em;">🤖</span>
+                                    <div>
+                                        <div style="font-weight: 600; color: #1e40af; margin-bottom: 5px;">AI Recommendation</div>
+                                        <div style="font-size: 0.9em; color: #1e3a8a;">Weather forecast shows 85% chance of rain. We've added a backup generator at no extra charge and waterproof covers are included.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="event-footer">
+                                <div>Deployment: Oct 20, 8:00 AM</div>
+                                <button class="btn btn-outline">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Insights -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🤖 AI-Powered Insights & Recommendations</h2>
+                    </div>
+                    
+                    <div style="display: grid; gap: 15px;">
+                        <div style="background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(6,182,212,0.1)); border-left: 4px solid #10b981; padding: 20px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                                <div>
+                                    <h3 style="color: #065f46; margin-bottom: 8px; font-size: 1.1em;">💰 Cost Optimization Opportunity</h3>
+                                    <p style="color: #047857; line-height: 1.6;">For your November corporate events, switching to hybrid generators could save you $4,200 (18%) while reducing emissions by 62%.</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-success">Apply to All November Events</button>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(236,72,153,0.1)); border-left: 4px solid #8b5cf6; padding: 20px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                                <div>
+                                    <h3 style="color: #6b21a8; margin-bottom: 8px; font-size: 1.1em;">📈 Volume Discount Available</h3>
+                                    <p style="color: #7c3aed; line-height: 1.6;">You've booked 47 events this year! You now qualify for our Platinum tier with 22% discount on all future bookings. Savings projected: $31K annually.</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary">Upgrade to Platinum</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Recommendations Page -->
+            <div id="ai-recommendations" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">🤖 AI-Powered Recommendations</h1>
+                    <p class="page-subtitle">Intelligent insights and autonomous optimizations for your business</p>
+                </div>
+                
+                <div style="display: grid; gap: 20px;">
+                    <!-- Recommendation 1 -->
+                    <div class="recommendation-card high-impact">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                            <div class="recommendation-icon">💰</div>
+                            <div class="impact-badge high">HIGH IMPACT</div>
+                        </div>
+                        <h3 class="recommendation-title">Cost Optimization: Switch November Events to Hybrid</h3>
+                        <p class="recommendation-description">
+                            Our AI analyzed your November event schedule and identified significant savings by switching to hybrid generators. 
+                            This change will maintain the same power capacity while reducing fuel costs by 67% and cutting emissions.
+                        </p>
+                        <div class="recommendation-metrics">
+                            <div class="metric">
+                                <div class="metric-label">Projected Savings</div>
+                                <div class="metric-value green">$4,200</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">CO₂ Reduction</div>
+                                <div class="metric-value green">8.3 tons</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Events Affected</div>
+                                <div class="metric-value green">5 events</div>
+                            </div>
+                        </div>
+                        <div class="recommendation-actions">
+                            <button class="btn btn-success">✅ Apply to All Events</button>
+                            <button class="btn btn-outline">📋 View Details</button>
+                            <button class="btn btn-outline">⏰ Remind Me Later</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendation 2 -->
+                    <div class="recommendation-card high-impact">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                            <div class="recommendation-icon">🏆</div>
+                            <div class="impact-badge high">HIGH IMPACT</div>
+                        </div>
+                        <h3 class="recommendation-title">Platinum Tier Upgrade: You Qualify for 22% Discount</h3>
+                        <p class="recommendation-description">
+                            Congratulations! You've booked 47 events this year, qualifying you for our Platinum tier. 
+                            This upgrade gives you 22% off all future bookings, priority support, and dedicated account management.
+                        </p>
+                        <div class="recommendation-metrics">
+                            <div class="metric">
+                                <div class="metric-label">Annual Savings</div>
+                                <div class="metric-value green">$31,000</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Discount Rate</div>
+                                <div class="metric-value green">22%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Support Level</div>
+                                <div class="metric-value green">Dedicated</div>
+                            </div>
+                        </div>
+                        <div class="recommendation-actions">
+                            <button class="btn btn-primary">🚀 Upgrade to Platinum</button>
+                            <button class="btn btn-outline">📄 See Benefits</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendation 3 -->
+                    <div class="recommendation-card medium-impact">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                            <div class="recommendation-icon">📅</div>
+                            <div class="impact-badge medium">MEDIUM IMPACT</div>
+                        </div>
+                        <h3 class="recommendation-title">Equipment Pre-Booking: Secure Units for Q1 2026</h3>
+                        <p class="recommendation-description">
+                            Based on your historical booking patterns, AI predicts you'll need 8-12 events in Q1 2026 (Jan-Mar). 
+                            Pre-book now to guarantee availability during peak season and lock in current pricing.
+                        </p>
+                        <div class="recommendation-metrics">
+                            <div class="metric">
+                                <div class="metric-label">Price Protection</div>
+                                <div class="metric-value green">~$2,800</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Predicted Events</div>
+                                <div class="metric-value green">8-12</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Availability Risk</div>
+                                <div class="metric-value green">High</div>
+                            </div>
+                        </div>
+                        <div class="recommendation-actions">
+                            <button class="btn btn-primary">📅 Pre-Book Q1</button>
+                            <button class="btn btn-outline">📊 See Forecast</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendation 4 -->
+                    <div class="recommendation-card medium-impact">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                            <div class="recommendation-icon">🌱</div>
+                            <div class="impact-badge medium">MEDIUM IMPACT</div>
+                        </div>
+                        <h3 class="recommendation-title">Carbon Neutral Certification: Complete Your Journey</h3>
+                        <p class="recommendation-description">
+                            You're 89% of the way to being fully carbon neutral! By purchasing offsets for your remaining 5.2 tons of CO₂ 
+                            and committing to hybrid-only solutions, you'll earn our Carbon Neutral certification.
+                        </p>
+                        <div class="recommendation-metrics">
+                            <div class="metric">
+                                <div class="metric-label">Offset Cost</div>
+                                <div class="metric-value green">$147</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Completion</div>
+                                <div class="metric-value green">89%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Certification</div>
+                                <div class="metric-value green">Ready</div>
+                            </div>
+                        </div>
+                        <div class="recommendation-actions">
+                            <button class="btn btn-success">🌍 Go Carbon Neutral</button>
+                            <button class="btn btn-outline">📜 View Certificate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Quote Page -->
+            <div id="quick-quote" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">⚡ Get Instant Quote</h1>
+                    <p class="page-subtitle">AI-powered quote in under 60 seconds</p>
+                </div>
+                
+                <div class="card">
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <div style="text-align: center; margin-bottom: 40px;">
+                            <div style="font-size: 3em; margin-bottom: 15px;">🤖</div>
+                            <h2 style="margin-bottom: 10px;">Hi Sarah! Let's power your next event.</h2>
+                            <p style="color: #64748b;">Tell me about your event and I'll create the perfect solution in seconds.</p>
+                        </div>
+                        
+                        <div style="background: #f8fafc; padding: 30px; border-radius: 16px; margin-bottom: 30px;">
+                            <div style="margin-bottom: 25px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Event Type</label>
+                                <select class="filter-select" style="width: 100%;">
+                                    <option>Select event type...</option>
+                                    <option>Music Festival / Concert</option>
+                                    <option>Corporate Event</option>
+                                    <option>Wedding</option>
+                                    <option>Film/TV Production</option>
+                                    <option>Sporting Event</option>
+                                    <option>Trade Show / Expo</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="grid-2" style="margin-bottom: 25px;">
+                                <div>
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Event Date</label>
+                                    <input type="date" class="filter-select" style="width: 100%;">
+                                </div>
+                                <div>
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Duration</label>
+                                    <select class="filter-select" style="width: 100%;">
+                                        <option>Single day</option>
+                                        <option>2-3 days</option>
+                                        <option>4-7 days</option>
+                                        <option>1-2 weeks</option>
+                                        <option>Longer</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 25px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Location (City, State)</label>
+                                <input type="text" class="filter-select" style="width: 100%;" placeholder="e.g., Austin, TX">
+                            </div>
+                            
+                            <div style="margin-bottom: 25px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Expected Attendance</label>
+                                <input type="number" class="filter-select" style="width: 100%;" placeholder="Number of people">
+                            </div>
+                            
+                            <div style="margin-bottom: 25px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Indoor or Outdoor?</label>
+                                <div style="display: flex; gap: 15px;">
+                                    <label style="flex: 1; cursor: pointer;">
+                                        <input type="radio" name="location-type" style="margin-right: 8px;">
+                                        <span>Indoor</span>
+                                    </label>
+                                    <label style="flex: 1; cursor: pointer;">
+                                        <input type="radio" name="location-type" style="margin-right: 8px;">
+                                        <span>Outdoor</span>
+                                    </label>
+                                    <label style="flex: 1; cursor: pointer;">
+                                        <input type="radio" name="location-type" style="margin-right: 8px;">
+                                        <span>Both</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 25px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Special Requirements (Optional)</label>
+                                <textarea class="filter-select" style="width: 100%; min-height: 100px; padding: 12px; resize: vertical;" placeholder="Silent operation needed, sustainability priority, specific power needs, etc."></textarea>
+                            </div>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                                <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                                    <span>🌍</span>
+                                    <span>Sustainability Preferences</span>
+                                </h3>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked>
+                                    <span>Prioritize hybrid/battery solutions (recommended)</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox">
+                                    <span>Carbon offset my event</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox">
+                                    <span>Include sustainability report for my stakeholders</span>
+                                </label>
+                            </div>
+                            
+                            <button class="btn btn-primary" style="width: 100%; padding: 18px; font-size: 1.1em;" onclick="generateQuote()">
+                                ⚡ Generate Instant Quote
+                            </button>
+                        </div>
+                        
+                        <div id="quoteResult" style="display: none;">
+                            <div style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; padding: 30px; border-radius: 16px; margin-bottom: 20px; text-align: center;">
+                                <div style="font-size: 1.2em; margin-bottom: 10px; opacity: 0.9;">Your Custom Quote</div>
+                                <div style="font-size: 3em; font-weight: 800; margin-bottom: 10px;">$3,847</div>
+                                <div style="opacity: 0.9;">Total for 3-day music festival | Generated in 2.3 seconds</div>
+                            </div>
+                            
+                            <div class="card">
+                                <h3 style="margin-bottom: 20px;">📦 Recommended Solution: "Festival Pro Package"</h3>
+                                
+                                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                                    <h4 style="margin-bottom: 15px; color: #3b82f6;">Equipment Included:</h4>
+                                    <div style="display: grid; gap: 12px;">
+                                        <div style="display: flex; justify-content: space-between; padding: 12px; background: white; border-radius: 8px;">
+                                            <span>⚡ 2x 500kW Hybrid Generators</span>
+                                            <span style="font-weight: 600;">$2,400</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; padding: 12px; background: white; border-radius: 8px;">
+                                            <span>🔋 1x Battery Storage Unit (backup)</span>
+                                            <span style="font-weight: 600;">$800</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; padding: 12px; background: white; border-radius: 8px;">
+                                            <span>📡 Real-time monitoring & support</span>
+                                            <span style="font-weight: 600;">Included</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; padding: 12px; background: white; border-radius: 8px;">
+                                            <span>🚚 Delivery, setup & retrieval</span>
+                                            <span style="font-weight: 600;">$647</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid-2" style="margin-bottom: 20px;">
+                                    <div style="background: #dcfce7; padding: 20px; border-radius: 12px; border: 2px solid #10b981;">
+                                        <div style="font-weight: 600; color: #065f46; margin-bottom: 8px;">🌱 Sustainability Impact</div>
+                                        <div style="color: #047857; font-size: 0.95em; line-height: 1.6;">
+                                            • 67% less CO₂ vs. diesel-only<br>
+                                            • 5.2 tons carbon saved<br>
+                                            • Equivalent to 121 trees planted
+                                        </div>
+                                    </div>
+                                    <div style="background: #dbeafe; padding: 20px; border-radius: 12px; border: 2px solid #3b82f6;">
+                                        <div style="font-weight: 600; color: #1e40af; margin-bottom: 8px;">💰 Your Savings</div>
+                                        <div style="color: #1e3a8a; font-size: 0.95em; line-height: 1.6;">
+                                            • List price: $4,580<br>
+                                            • Platinum discount: 22% off<br>
+                                            • <strong>You save: $733</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 15px;">
+                                    <button class="btn btn-success" style="flex: 1; padding: 16px; font-size: 1.05em;">
+                                        ✅ Book Now
+                                    </button>
+                                    <button class="btn btn-outline" style="padding: 16px;">
+                                        💾 Save Quote
+                                    </button>
+                                    <button class="btn btn-outline" style="padding: 16px;">
+                                        📧 Email Quote
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- My Events Page -->
+            <div id="my-events" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">My Events</h1>
+                    <p class="page-subtitle">Manage all your events in one place</p>
+                </div>
+                
+                <div class="filters">
+                    <select class="filter-select">
+                        <option>All Events</option>
+                        <option>Active</option>
+                        <option>Upcoming</option>
+                        <option>Completed</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>All Time</option>
+                        <option>This Month</option>
+                        <option>Next 30 Days</option>
+                        <option>This Quarter</option>
+                    </select>
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Search events...">
+                    </div>
+                    <button class="btn btn-primary" onclick="showPage('quick-quote')">+ New Event</button>
+                </div>
+                
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Event Name</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Equipment</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 600;">🎸 Austin Music Festival</div>
+                                    <div style="font-size: 0.85em; color: #64748b;">8,500 attendees</div>
+                                </td>
+                                <td>Oct 18-20, 2025</td>
+                                <td>Austin, TX</td>
+                                <td>4x 500kW Hybrid</td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-outline" style="padding: 8px 16px; font-size: 0.85em;">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 600;">🎬 Downtown Film Production</div>
+                                    <div style="font-size: 0.85em; color: #64748b;">Silent power required</div>
+                                </td>
+                                <td>Oct 19-22, 2025</td>
+                                <td>Dallas, TX</td>
+                                <td>2x Battery Storage</td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-outline" style="padding: 8px 16px; font-size: 0.85em;">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 600;">💍 Lakeside Wedding</div>
+                                    <div style="font-size: 0.85em; color: #64748b;">250 guests</div>
+                                </td>
+                                <td>Oct 21, 2025</td>
+                                <td>Austin, TX</td>
+                                <td>1x 150kW Hybrid</td>
+                                <td><span class="badge badge-info">Upcoming</span></td>
+                                <td>
+                                    <button class="btn btn-outline" style="padding: 8px 16px; font-size: 0.85em;">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 600;">🏢 Tech Conference 2025</div>
+                                    <div style="font-size: 0.85em; color: #64748b;">2,000 attendees</div>
+                                </td>
+                                <td>Oct 25-27, 2025</td>
+                                <td>Houston, TX</td>
+                                <td>3x 300kW Hybrid</td>
+                                <td><span class="badge badge-info">Upcoming</span></td>
+                                <td>
+                                    <button class="btn btn-outline" style="padding: 8px 16px; font-size: 0.85em;">View</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Live Monitoring Page -->
+            <div id="live-monitoring" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">📡 Live Equipment Monitoring</h1>
+                    <p class="page-subtitle">Real-time status of all active deployments</p>
+                </div>
+                
+                <div class="monitoring-grid">
+                    <div class="monitor-card">
+                        <div class="monitor-header">
+                            <div>
+                                <h3 style="font-size: 1.1em; margin-bottom: 5px;">Generator #AMF-501</h3>
+                                <div style="color: #64748b; font-size: 0.9em;">Austin Music Festival</div>
+                            </div>
+                            <div class="health-indicator health-good"></div>
+                        </div>
+                        <div style="margin: 20px 0;">
+                            <div class="metric-row">
+                                <span class="metric-label">Power Output</span>
+                                <span class="metric-value" style="color: #10b981;">487 kW / 500 kW</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Fuel Level</span>
+                                <span class="metric-value">68%</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Runtime</span>
+                                <span class="metric-value">14h 23m</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Temperature</span>
+                                <span class="metric-value">82°F (Normal)</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Efficiency</span>
+                                <span class="metric-value" style="color: #10b981;">94.3%</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline" style="width: 100%;">View Full Details</button>
+                    </div>
+                    
+                    <div class="monitor-card">
+                        <div class="monitor-header">
+                            <div>
+                                <h3 style="font-size: 1.1em; margin-bottom: 5px;">Battery #BAT-203</h3>
+                                <div style="color: #64748b; font-size: 0.9em;">Film Production Dallas</div>
+                            </div>
+                            <div class="health-indicator health-warning"></div>
+                        </div>
+                        <div style="margin: 20px 0;">
+                            <div class="metric-row">
+                                <span class="metric-label">Charge Level</span>
+                                <span class="metric-value" style="color: #f59e0b;">15%</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Power Delivery</span>
+                                <span class="metric-value">42 kW</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Est. Runtime</span>
+                                <span class="metric-value">1h 18m</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Backup Status</span>
+                                <span class="metric-value" style="color: #10b981;">Generator Ready</span>
+                            </div>
+                        </div>
+                        <div style="background: #fef3c7; padding: 12px; border-radius: 8px; font-size: 0.9em; color: #78350f; margin-bottom: 15px;">
+                            ⚠️ AI deployed backup generator. No impact to production.
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">Acknowledge Alert</button>
+                    </div>
+                    
+                    <div class="monitor-card">
+                        <div class="monitor-header">
+                            <div>
+                                <h3 style="font-size: 1.1em; margin-bottom: 5px;">Generator #AMF-502</h3>
+                                <div style="color: #64748b; font-size: 0.9em;">Austin Music Festival</div>
+                            </div>
+                            <div class="health-indicator health-good"></div>
+                        </div>
+                        <div style="margin: 20px 0;">
+                            <div class="metric-row">
+                                <span class="metric-label">Power Output</span>
+                                <span class="metric-value" style="color: #10b981;">412 kW / 500 kW</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Fuel Level</span>
+                                <span class="metric-value">72%</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Runtime</span>
+                                <span class="metric-value">14h 23m</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">CO₂ Saved Today</span>
+                                <span class="metric-value" style="color: #10b981;">247 kg</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline" style="width: 100%;">View Full Details</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Equipment Catalog -->
+            <div id="equipment" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Equipment Catalog</h1>
+                    <p class="page-subtitle">Browse our complete inventory with real-time availability</p>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active">All Equipment</div>
+                    <div class="tab">Generators</div>
+                    <div class="tab">Battery Storage</div>
+                    <div class="tab">Hybrid Systems</div>
+                    <div class="tab">Accessories</div>
+                </div>
+                
+                <div class="filters">
+                    <select class="filter-select">
+                        <option>All Locations</option>
+                        <option>Austin, TX</option>
+                        <option>Dallas, TX</option>
+                        <option>Houston, TX</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>All Power Ranges</option>
+                        <option>Under 100kW</option>
+                        <option>100-300kW</option>
+                        <option>300-500kW</option>
+                        <option>500kW+</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>Available Now</option>
+                        <option>Next 7 Days</option>
+                        <option>Next 30 Days</option>
+                    </select>
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Search equipment...">
+                    </div>
+                </div>
+                
+                <div class="equipment-grid">
+                    <div class="equipment-card">
+                        <div class="equipment-image">
+                            ⚡
+                            <div class="equipment-badge">AVAILABLE</div>
+                        </div>
+                        <div class="equipment-content">
+                            <div class="equipment-name">500kW Hybrid Generator</div>
+                            <div class="equipment-specs">Ultra-quiet • 70% fuel savings • GPS tracked</div>
+                            <div class="equipment-price">$1,200<span style="font-size: 0.5em; color: #64748b;">/day</span></div>
+                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <span class="badge badge-success">12 Available</span>
+                                <span class="badge badge-info">Austin</span>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%;">Add to Quote</button>
+                        </div>
+                    </div>
+                    
+                    <div class="equipment-card">
+                        <div class="equipment-image">
+                            🔋
+                            <div class="equipment-badge">AVAILABLE</div>
+                        </div>
+                        <div class="equipment-content">
+                            <div class="equipment-name">Battery Storage System</div>
+                            <div class="equipment-specs">Silent • Zero emissions • 8hr runtime</div>
+                            <div class="equipment-price">$800<span style="font-size: 0.5em; color: #64748b;">/day</span></div>
+                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <span class="badge badge-success">8 Available</span>
+                                <span class="badge badge-info">Dallas</span>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%;">Add to Quote</button>
+                        </div>
+                    </div>
+                    
+                    <div class="equipment-card">
+                        <div class="equipment-image">
+                            ⚡
+                            <div class="equipment-badge">AVAILABLE</div>
+                        </div>
+                        <div class="equipment-content">
+                            <div class="equipment-name">300kW Hybrid Generator</div>
+                            <div class="equipment-specs">Quiet operation • 65% fuel savings</div>
+                            <div class="equipment-price">$750<span style="font-size: 0.5em; color: #64748b;">/day</span></div>
+                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <span class="badge badge-success">15 Available</span>
+                                <span class="badge badge-info">Houston</span>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%;">Add to Quote</button>
+                        </div>
+                    </div>
+                    
+                    <div class="equipment-card">
+                        <div class="equipment-image">
+                            ⚡
+                            <div class="equipment-badge" style="background: #f59e0b;">LIMITED</div>
+                        </div>
+                        <div class="equipment-content">
+                            <div class="equipment-name">150kW Hybrid Generator</div>
+                            <div class="equipment-specs">Perfect for weddings • Silent mode</div>
+                            <div class="equipment-price">$450<span style="font-size: 0.5em; color: #64748b;">/day</span></div>
+                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <span class="badge badge-warning">3 Available</span>
+                                <span class="badge badge-info">Austin</span>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%;">Add to Quote</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analytics Page -->
+            <div id="analytics" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Analytics & Reports</h1>
+                    <p class="page-subtitle">Data-driven insights into your events</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Events (YTD)</div>
+                        <div class="stat-value">47</div>
+                        <div class="stat-change">↗ +34% vs. last year</div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-label">Total Spend (YTD)</div>
+                        <div class="stat-value">$127K</div>
+                        <div class="stat-change">After $23.4K in savings</div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-label">Avg. Event Cost</div>
+                        <div class="stat-value">$2,702</div>
+                        <div class="stat-change">↘ 18% lower than industry</div>
+                    </div>
+                    <div class="stat-card orange">
+                        <div class="stat-label">Equipment Uptime</div>
+                        <div class="stat-value">99.8%</div>
+                        <div class="stat-change">Zero critical failures</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Event Spending Trends</h2>
+                        <select class="filter-select" onchange="updateSpendingChart(this.value)">
+                            <option value="12">Last 12 Months</option>
+                            <option value="6">Last 6 Months</option>
+                            <option value="3">This Quarter</option>
+                        </select>
+                    </div>
+                    <div style="padding: 20px; background: #f8fafc; border-radius: 12px;">
+                        <canvas id="spendingChart" style="width: 100%; height: 350px;"></canvas>
+                        <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 3px; background: #3b82f6;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">Total Spend</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 3px; background: #10b981;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">Savings</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 3px; background: #8b5cf6;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">Events Count</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="card">
+                        <h3 style="margin-bottom: 20px;">Most Used Equipment</h3>
+                        <div style="display: grid; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>500kW Hybrid Generator</span>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="progress-bar" style="width: 150px;">
+                                        <div class="progress-fill" style="width: 87%;"></div>
+                                    </div>
+                                    <span style="font-weight: 600;">87%</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>300kW Hybrid Generator</span>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="progress-bar" style="width: 150px;">
+                                        <div class="progress-fill" style="width: 64%;"></div>
+                                    </div>
+                                    <span style="font-weight: 600;">64%</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Battery Storage</span>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="progress-bar" style="width: 150px;">
+                                        <div class="progress-fill" style="width: 42%;"></div>
+                                    </div>
+                                    <span style="font-weight: 600;">42%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 style="margin-bottom: 20px;">Event Types Distribution</h3>
+                        <div style="display: grid; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                                <span>🎸 Music/Festivals</span>
+                                <span style="font-weight: 600;">42%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                                <span>🏢 Corporate Events</span>
+                                <span style="font-weight: 600;">28%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                                <span>💍 Weddings</span>
+                                <span style="font-weight: 600;">18%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                                <span>🎬 Film/Production</span>
+                                <span style="font-weight: 600;">12%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sustainability Page -->
+            <div id="sustainability" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">🌍 Sustainability Dashboard</h1>
+                    <p class="page-subtitle">Your environmental impact and green initiatives</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card green">
+                        <div class="stat-label">Total Carbon Saved (YTD)</div>
+                        <div class="stat-value">47.3t</div>
+                        <div class="stat-change">Equivalent to 1,098 trees</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Hybrid Solution Adoption</div>
+                        <div class="stat-value">89%</div>
+                        <div class="stat-change">Industry avg: 34%</div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-label">Fuel Savings</div>
+                        <div class="stat-value">12,847L</div>
+                        <div class="stat-change">vs. diesel-only solutions</div>
+                    </div>
+                    <div class="stat-card orange">
+                        <div class="stat-label">Carbon Offset Credits</div>
+                        <div class="stat-value">15.2t</div>
+                        <div class="stat-change">Purchased & verified</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Monthly Carbon Impact</h2>
+                        <select class="filter-select" onchange="updateCarbonChart(this.value)">
+                            <option value="12">Last 12 Months</option>
+                            <option value="6">Last 6 Months</option>
+                            <option value="3">This Quarter</option>
+                        </select>
+                    </div>
+                    <div style="padding: 20px; background: #f8fafc; border-radius: 12px;">
+                        <canvas id="carbonChart" style="width: 100%; height: 350px;"></canvas>
+                        <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 12px; background: #10b981; border-radius: 2px;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">CO₂ Avoided (Hybrid)</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 12px; background: #ef4444; border-radius: 2px; opacity: 0.3;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">Diesel Baseline</span>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 20px; padding: 15px; background: white; border-radius: 10px;">
+                            <div style="color: #64748b; font-size: 0.9em; margin-bottom: 5px;">Cumulative Impact This Year</div>
+                            <div style="font-size: 2em; font-weight: 700; color: #10b981;">47.3 tons CO₂</div>
+                            <div style="color: #64748b; font-size: 0.9em; margin-top: 5px;">Equivalent to planting 1,098 trees 🌳</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2 style="margin-bottom: 20px;">🏆 Sustainability Achievements</h2>
+                    <div class="grid-3">
+                        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">🌟</div>
+                            <h3 style="margin-bottom: 10px;">Green Leader</h3>
+                            <p style="opacity: 0.9;">Top 5% in sustainability adoption</p>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">🌱</div>
+                            <h3 style="margin-bottom: 10px;">Carbon Neutral</h3>
+                            <p style="opacity: 0.9;">All events offset in 2025</p>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">♻️</div>
+                            <h3 style="margin-bottom: 10px;">Hybrid Champion</h3>
+                            <p style="opacity: 0.9;">89% hybrid adoption rate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Billing Page -->
+            <div id="billing" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Billing & Invoices</h1>
+                    <p class="page-subtitle">Manage your payments and view billing history</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Payment Methods</h2>
+                        <button class="btn btn-primary">+ Add Card</button>
+                    </div>
+                    <div style="display: grid; gap: 15px;">
+                        <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 25px; border-radius: 16px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                                <span style="font-weight: 600;">Visa •••• 4242</span>
+                                <span class="badge" style="background: #10b981; color: white;">Primary</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="opacity: 0.8;">Expires 12/27</span>
+                                <span style="font-weight: 600;">Sarah Chen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Invoices</h2>
+                        <button class="btn btn-outline">Download All</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Invoice #</th>
+                                <th>Event</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#INV-2847</td>
+                                <td>Austin Music Festival</td>
+                                <td>Oct 15, 2025</td>
+                                <td>$9,240</td>
+                                <td><span class="badge badge-success">Paid</span></td>
+                                <td><button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.85em;">Download</button></td>
+                            </tr>
+                            <tr>
+                                <td>#INV-2846</td>
+                                <td>Corporate Summit Dallas</td>
+                                <td>Oct 12, 2025</td>
+                                <td>$3,420</td>
+                                <td><span class="badge badge-success">Paid</span></td>
+                                <td><button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.85em;">Download</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Team Page -->
+            <div id="team" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Team Management</h1>
+                    <p class="page-subtitle">Manage team members and permissions</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Team Members (8)</h2>
+                        <button class="btn btn-primary">+ Invite Member</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div class="avatar" style="width: 35px; height: 35px; font-size: 0.9em;">SC</div>
+                                        <span style="font-weight: 600;">Sarah Chen</span>
+                                    </div>
+                                </td>
+                                <td>sarah@momentumevents.com</td>
+                                <td><span class="badge badge-info">Admin</span></td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div class="avatar" style="width: 35px; height: 35px; font-size: 0.9em; background: linear-gradient(135deg, #10b981, #06b6d4);">MR</div>
+                                        <span style="font-weight: 600;">Marcus Rodriguez</span>
+                                    </div>
+                                </td>
+                                <td>marcus@momentumevents.com</td>
+                                <td><span class="badge">Member</span></td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td><button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.85em;">Edit</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI Chat Widget -->
+    <div class="ai-chat-widget">
+        <button class="chat-bubble-btn" onclick="toggleChat()">💬</button>
+        
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div>
+                    <h3>NOVA AI Assistant</h3>
+                    <div style="font-size: 0.85em; opacity: 0.9;">Always here to help</div>
+                </div>
+                <button class="chat-close" onclick="toggleChat()">✕</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message">
+                    <div class="chat-avatar ai-avatar">🤖</div>
+                    <div class="chat-bubble">
+                        Hi Sarah! I'm NOVA, your AI assistant. I can help you with quotes, equipment questions, event planning, or anything else. What can I do for you?
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" placeholder="Ask me anything..." id="chatInputField" onkeypress="if(event.key==='Enter') sendChatMessage()">
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/app.js"></script>
+</body>
+</html>
