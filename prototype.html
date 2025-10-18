@@ -1748,14 +1748,28 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Event Spending Trends</h2>
-                        <select class="filter-select">
-                            <option>Last 12 Months</option>
-                            <option>Last 6 Months</option>
-                            <option>This Quarter</option>
+                        <select class="filter-select" onchange="updateSpendingChart(this.value)">
+                            <option value="12">Last 12 Months</option>
+                            <option value="6">Last 6 Months</option>
+                            <option value="3">This Quarter</option>
                         </select>
                     </div>
-                    <div style="background: #f8fafc; height: 300px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
-                        📊 Interactive chart showing monthly spending, events count, and savings trends
+                    <div style="padding: 20px; background: #f8fafc; border-radius: 12px;">
+                        <canvas id="spendingChart" style="width: 100%; height: 350px;"></canvas>
+                        <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 3px; background: #3b82f6;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">Total Spend</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 3px; background: #10b981;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">Savings</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 3px; background: #8b5cf6;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">Events Count</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -2216,6 +2230,249 @@
             document.getElementById('quoteResult').style.display = 'block';
             document.getElementById('quoteResult').scrollIntoView({ behavior: 'smooth' });
         }
+
+        // Chart Data
+const spendingData = {
+    12: {
+        labels: ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+        spending: [8500, 12300, 9800, 11200, 14500, 13800, 15200, 12900, 14100, 13500, 11800, 9200],
+        savings: [1200, 1800, 1500, 1700, 2100, 2000, 2300, 1900, 2100, 2000, 1800, 1400],
+        events: [3, 5, 4, 4, 6, 5, 6, 5, 5, 5, 4, 3]
+    },
+    6: {
+        labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+        spending: [15200, 12900, 14100, 13500, 11800, 9200],
+        savings: [2300, 1900, 2100, 2000, 1800, 1400],
+        events: [6, 5, 5, 5, 4, 3]
+    },
+    3: {
+        labels: ['Aug', 'Sep', 'Oct'],
+        spending: [13500, 11800, 9200],
+        savings: [2000, 1800, 1400],
+        events: [5, 4, 3]
+    }
+};
+
+const carbonData = {
+    12: {
+        labels: ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+        avoided: [2.8, 4.2, 3.5, 3.9, 5.1, 4.8, 5.4, 4.5, 4.9, 4.7, 4.1, 3.2],
+        baseline: [4.5, 6.8, 5.6, 6.3, 8.2, 7.7, 8.7, 7.3, 7.9, 7.6, 6.6, 5.2]
+    },
+    6: {
+        labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+        avoided: [5.4, 4.5, 4.9, 4.7, 4.1, 3.2],
+        baseline: [8.7, 7.3, 7.9, 7.6, 6.6, 5.2]
+    },
+    3: {
+        labels: ['Aug', 'Sep', 'Oct'],
+        avoided: [4.7, 4.1, 3.2],
+        baseline: [7.6, 6.6, 5.2]
+    }
+};
+
+        // Draw Spending Chart
+        function drawSpendingChart(period = '12') {
+            const canvas = document.getElementById('spendingChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const data = spendingData[period];
+            
+            canvas.width = canvas.offsetWidth * 2;
+            canvas.height = 700;
+            ctx.scale(2, 2);
+            
+            const width = canvas.offsetWidth;
+            const height = 350;
+            const padding = 50;
+            const chartWidth = width - padding * 2;
+            const chartHeight = height - padding * 2;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            const maxSpending = Math.max(...data.spending);
+            
+            // Grid lines
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (chartHeight / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+                
+                const value = Math.round(maxSpending * (1 - i / 5) / 1000);
+                ctx.fillStyle = '#64748b';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText('$' + value + 'K', padding - 10, y + 4);
+            }
+            
+            // Spending line
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 3;
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            
+            data.spending.forEach((value, i) => {
+                const x = padding + (chartWidth / (data.labels.length - 1)) * i;
+                const y = padding + chartHeight - (value / maxSpending) * chartHeight;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+            
+            // Spending points
+            data.spending.forEach((value, i) => {
+                const x = padding + (chartWidth / (data.labels.length - 1)) * i;
+                const y = padding + chartHeight - (value / maxSpending) * chartHeight;
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = '#3b82f6';
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+            
+            // Savings line
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            data.savings.forEach((value, i) => {
+                const x = padding + (chartWidth / (data.labels.length - 1)) * i;
+                const y = padding + chartHeight - (value / maxSpending) * chartHeight;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+            
+            // Savings points
+            data.savings.forEach((value, i) => {
+                const x = padding + (chartWidth / (data.labels.length - 1)) * i;
+                const y = padding + chartHeight - (value / maxSpending) * chartHeight;
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#10b981';
+                ctx.fill();
+            });
+            
+            // Events bars
+            const barWidth = (chartWidth / data.labels.length) * 0.3;
+            const maxEvents = Math.max(...data.events);
+            data.events.forEach((value, i) => {
+                const x = padding + (chartWidth / (data.labels.length - 1)) * i - barWidth / 2;
+                const barHeight = (value / maxEvents) * (chartHeight * 0.3);
+                const y = height - padding - barHeight;
+                ctx.fillStyle = '#8b5cf6';
+                ctx.fillRect(x, y, barWidth, barHeight);
+            });
+            
+            // X-axis labels
+            ctx.fillStyle = '#64748b';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            data.labels.forEach((label, i) => {
+                const x = padding + (chartWidth / (data.labels.length - 1)) * i;
+                ctx.fillText(label, x, height - padding + 20);
+            });
+        }
+
+        // Draw Carbon Chart
+        function drawCarbonChart(period = '12') {
+            const canvas = document.getElementById('carbonChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const data = carbonData[period];
+            
+            canvas.width = canvas.offsetWidth * 2;
+            canvas.height = 700;
+            ctx.scale(2, 2);
+            
+            const width = canvas.offsetWidth;
+            const height = 350;
+            const padding = 50;
+            const chartWidth = width - padding * 2;
+            const chartHeight = height - padding * 2;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            const maxValue = Math.max(...data.baseline);
+            
+            // Grid lines
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (chartHeight / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+                
+                const value = (maxValue * (1 - i / 5)).toFixed(1);
+                ctx.fillStyle = '#64748b';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(value + 't', padding - 10, y + 4);
+            }
+            
+            // Bars
+            const barWidth = (chartWidth / data.labels.length) * 0.35;
+            const barSpacing = (chartWidth / data.labels.length);
+            
+            data.labels.forEach((label, i) => {
+                const x = padding + barSpacing * i + (barSpacing - barWidth * 2) / 2;
+                
+                // Baseline bar (faded)
+                const baselineHeight = (data.baseline[i] / maxValue) * chartHeight;
+                const baselineY = height - padding - baselineHeight;
+                ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+                ctx.fillRect(x, baselineY, barWidth, baselineHeight);
+                
+                // Avoided bar (green)
+                const avoidedHeight = (data.avoided[i] / maxValue) * chartHeight;
+                const avoidedY = height - padding - avoidedHeight;
+                ctx.fillStyle = '#10b981';
+                ctx.fillRect(x + barWidth, avoidedY, barWidth, avoidedHeight);
+                
+                // Value labels
+                ctx.fillStyle = '#047857';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(data.avoided[i].toFixed(1) + 't', x + barWidth * 1.5, avoidedY - 5);
+            });
+            
+            // X-axis labels
+            ctx.fillStyle = '#64748b';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            data.labels.forEach((label, i) => {
+                const x = padding + barSpacing * i + barSpacing / 2;
+                ctx.fillText(label, x, height - padding + 20);
+            });
+        }
+
+        function updateSpendingChart(period) {
+            drawSpendingChart(period);
+        }
+
+        function updateCarbonChart(period) {
+            drawCarbonChart(period);
+        }
+
+        window.addEventListener('load', () => {
+            drawSpendingChart('12');
+            drawCarbonChart('12');
+        });
+
+        window.addEventListener('resize', () => {
+            drawSpendingChart('12');
+            drawCarbonChart('12');
+        });
     </script>
 </body>
 </html>
