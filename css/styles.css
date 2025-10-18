@@ -328,6 +328,7 @@ body {
     font-size: 0.95em;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
 }
 
