@@ -1,4 +1,397 @@
 // ==========================
+// EQUIPMENT DATA
+// ==========================
+
+const equipmentInventory = [
+    {
+        id: 'gen-500-hybrid-1',
+        name: '500kW Hybrid Generator',
+        category: 'generator',
+        type: 'hybrid',
+        power: 500,
+        price: 1200,
+        specs: 'Ultra-quiet • 70% fuel savings • GPS tracked',
+        available: 12,
+        location: 'Austin',
+        emoji: '⚡',
+        features: ['Ultra-quiet operation', 'Hybrid battery system', 'GPS tracking', 'Remote monitoring', 'Tier 4 Final']
+    },
+    {
+        id: 'bat-storage-1',
+        name: 'Battery Storage System',
+        category: 'battery',
+        type: 'battery',
+        power: 100,
+        price: 800,
+        specs: 'Silent • Zero emissions • 8hr runtime',
+        available: 8,
+        location: 'Dallas',
+        emoji: '🔋',
+        features: ['Silent operation', 'Zero emissions', '8-hour runtime', 'Fast recharge', 'Scalable']
+    },
+    {
+        id: 'gen-300-hybrid-1',
+        name: '300kW Hybrid Generator',
+        category: 'generator',
+        type: 'hybrid',
+        power: 300,
+        price: 750,
+        specs: 'Quiet operation • 65% fuel savings',
+        available: 15,
+        location: 'Houston',
+        emoji: '⚡',
+        features: ['Quiet operation', 'Hybrid technology', '65% fuel reduction', 'Remote monitoring']
+    },
+    {
+        id: 'gen-150-hybrid-1',
+        name: '150kW Hybrid Generator',
+        category: 'generator',
+        type: 'hybrid',
+        power: 150,
+        price: 450,
+        specs: 'Perfect for weddings • Silent mode',
+        available: 3,
+        location: 'Austin',
+        emoji: '⚡',
+        features: ['Silent mode', 'Compact design', 'Perfect for events', 'Low emissions']
+    },
+    {
+        id: 'gen-750-diesel-1',
+        name: '750kW Diesel Generator',
+        category: 'generator',
+        type: 'diesel',
+        power: 750,
+        price: 950,
+        specs: 'High capacity • Industrial grade • Reliable',
+        available: 6,
+        location: 'Houston',
+        emoji: '⚡',
+        features: ['High capacity', 'Industrial grade', 'Proven reliability', 'Tier 4 Final']
+    },
+    {
+        id: 'bat-storage-2',
+        name: '200kW Battery System',
+        category: 'battery',
+        type: 'battery',
+        power: 200,
+        price: 1400,
+        specs: 'Silent • Zero emissions • 12hr runtime',
+        available: 4,
+        location: 'Austin',
+        emoji: '🔋',
+        features: ['Extended runtime', 'Silent operation', 'Zero emissions', 'Rapid deployment']
+    },
+    {
+        id: 'gen-250-diesel-1',
+        name: '250kW Diesel Generator',
+        category: 'generator',
+        type: 'diesel',
+        power: 250,
+        price: 600,
+        specs: 'Standard power • Fuel efficient • Reliable',
+        available: 10,
+        location: 'Dallas',
+        emoji: '⚡',
+        features: ['Fuel efficient', 'Reliable performance', 'Easy transport', 'Weather resistant']
+    },
+    {
+        id: 'gen-1000-hybrid-1',
+        name: '1000kW Hybrid Generator',
+        category: 'generator',
+        type: 'hybrid',
+        power: 1000,
+        price: 2100,
+        specs: 'Maximum capacity • Ultra-efficient • Silent',
+        available: 2,
+        location: 'Houston',
+        emoji: '⚡',
+        features: ['Maximum power output', 'Ultra-efficient', 'Minimal noise', 'Advanced monitoring']
+    },
+    {
+        id: 'solar-panel-1',
+        name: 'Solar Panel Array',
+        category: 'accessory',
+        type: 'solar',
+        power: 50,
+        price: 400,
+        specs: 'Renewable • Supplement power • Eco-friendly',
+        available: 20,
+        location: 'Austin',
+        emoji: '☀️',
+        features: ['100% renewable', 'Supplement power', 'Reduce fuel costs', 'Easy setup']
+    },
+    {
+        id: 'dist-panel-1',
+        name: 'Power Distribution Panel',
+        category: 'accessory',
+        type: 'distribution',
+        power: 0,
+        price: 150,
+        specs: 'Safe distribution • Multiple circuits • Weather resistant',
+        available: 25,
+        location: 'Dallas',
+        emoji: '🔌',
+        features: ['Multiple circuits', 'Circuit breakers', 'Weather resistant', 'Easy connection']
+    },
+    {
+        id: 'cable-pack-1',
+        name: 'Heavy Duty Cable Pack',
+        category: 'accessory',
+        type: 'cables',
+        power: 0,
+        price: 75,
+        specs: '100ft cables • Weather resistant • Various gauges',
+        available: 50,
+        location: 'Houston',
+        emoji: '🔗',
+        features: ['100ft length', 'Various gauges', 'Weather resistant', 'Industrial grade']
+    },
+    {
+        id: 'fuel-tank-1',
+        name: 'Extended Fuel Tank',
+        category: 'accessory',
+        type: 'fuel',
+        power: 0,
+        price: 200,
+        specs: '500 gallon capacity • Spill containment • Auto-fill ready',
+        available: 15,
+        location: 'Austin',
+        emoji: '⛽',
+        features: ['500 gallon capacity', 'Spill containment', 'Auto-fill compatible', 'DOT certified']
+    }
+];
+
+// Quote cart to store selected equipment
+let quoteCart = [];
+
+// ==========================
+// EQUIPMENT FILTERING
+// ==========================
+
+// Current filter state
+let equipmentFilters = {
+    category: 'all',
+    location: 'all',
+    powerRange: 'all',
+    availability: 'all',
+    searchTerm: ''
+};
+
+function filterEquipment() {
+    let filtered = equipmentInventory.filter(item => {
+        // Category filter
+        if (equipmentFilters.category !== 'all') {
+            if (equipmentFilters.category === 'generator' && item.category !== 'generator') return false;
+            if (equipmentFilters.category === 'battery' && item.category !== 'battery') return false;
+            if (equipmentFilters.category === 'hybrid' && item.type !== 'hybrid') return false;
+            if (equipmentFilters.category === 'accessory' && item.category !== 'accessory') return false;
+        }
+        
+        // Location filter
+        if (equipmentFilters.location !== 'all' && item.location !== equipmentFilters.location) {
+            return false;
+        }
+        
+        // Power range filter
+        if (equipmentFilters.powerRange !== 'all') {
+            if (equipmentFilters.powerRange === 'under100' && item.power >= 100) return false;
+            if (equipmentFilters.powerRange === '100-300' && (item.power < 100 || item.power > 300)) return false;
+            if (equipmentFilters.powerRange === '300-500' && (item.power < 300 || item.power > 500)) return false;
+            if (equipmentFilters.powerRange === '500plus' && item.power < 500) return false;
+        }
+        
+        // Availability filter
+        if (equipmentFilters.availability === 'now' && item.available === 0) return false;
+        if (equipmentFilters.availability === '7days' && item.available < 3) return false;
+        if (equipmentFilters.availability === '30days' && item.available < 1) return false;
+        
+        // Search filter
+        if (equipmentFilters.searchTerm) {
+            const searchLower = equipmentFilters.searchTerm.toLowerCase();
+            return item.name.toLowerCase().includes(searchLower) || 
+                   item.specs.toLowerCase().includes(searchLower) ||
+                   item.location.toLowerCase().includes(searchLower);
+        }
+        
+        return true;
+    });
+    
+    return filtered;
+}
+
+function renderEquipmentGrid(equipment) {
+    const grid = document.querySelector('.equipment-grid');
+    if (!grid) return;
+    
+    if (equipment.length === 0) {
+        grid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+                <div style="font-size: 4em; margin-bottom: 20px; opacity: 0.3;">🔍</div>
+                <h3 style="color: #64748b; margin-bottom: 10px;">No equipment found</h3>
+                <p style="color: #94a3b8;">Try adjusting your filters or search terms</p>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = equipment.map(item => {
+        const badgeColor = item.available > 5 ? '#10b981' : (item.available > 0 ? '#f59e0b' : '#ef4444');
+        const badgeText = item.available > 5 ? 'AVAILABLE' : (item.available > 0 ? 'LIMITED' : 'UNAVAILABLE');
+        const availabilityBadge = item.available > 0 ? 
+            `<span class="badge ${item.available > 5 ? 'badge-success' : 'badge-warning'}">${item.available} Available</span>` :
+            `<span class="badge" style="background: #fee2e2; color: #991b1b;">Out of Stock</span>`;
+        
+        return `
+            <div class="equipment-card">
+                <div class="equipment-image">
+                    ${item.emoji}
+                    <div class="equipment-badge" style="background: ${badgeColor};">${badgeText}</div>
+                </div>
+                <div class="equipment-content">
+                    <div class="equipment-name">${item.name}</div>
+                    <div class="equipment-specs">${item.specs}</div>
+                    <div class="equipment-price">$${item.price.toLocaleString()}<span style="font-size: 0.5em; color: #64748b;">/day</span></div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        ${availabilityBadge}
+                        <span class="badge badge-info">${item.location}</span>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="addToQuote('${item.id}')" ${item.available === 0 ? 'disabled' : ''}>
+                        ${item.available > 0 ? 'Add to Quote' : 'Unavailable'}
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function updateEquipmentDisplay() {
+    const filtered = filterEquipment();
+    renderEquipmentGrid(filtered);
+}
+
+function setEquipmentCategory(category) {
+    equipmentFilters.category = category;
+    
+    // Update active tab
+    document.querySelectorAll('#equipment .tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    updateEquipmentDisplay();
+}
+
+function setEquipmentLocation(location) {
+    equipmentFilters.location = location;
+    updateEquipmentDisplay();
+}
+
+function setEquipmentPowerRange(range) {
+    equipmentFilters.powerRange = range;
+    updateEquipmentDisplay();
+}
+
+function setEquipmentAvailability(availability) {
+    equipmentFilters.availability = availability;
+    updateEquipmentDisplay();
+}
+
+function searchEquipment(searchTerm) {
+    equipmentFilters.searchTerm = searchTerm;
+    updateEquipmentDisplay();
+}
+
+function addToQuote(equipmentId) {
+    const equipment = equipmentInventory.find(item => item.id === equipmentId);
+    if (!equipment) return;
+    
+    // Check if already in cart
+    const existingIndex = quoteCart.findIndex(item => item.id === equipmentId);
+    
+    if (existingIndex >= 0) {
+        // Increment quantity
+        quoteCart[existingIndex].quantity++;
+    } else {
+        // Add new item
+        quoteCart.push({
+            ...equipment,
+            quantity: 1,
+            days: 1
+        });
+    }
+    
+    // Show confirmation
+    showNotification(`✅ ${equipment.name} added to quote!`, 'success');
+    updateQuoteCartBadge();
+}
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 90px;
+        right: 30px;
+        background: ${type === 'success' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'};
+        color: white;
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+        font-weight: 500;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+function updateQuoteCartBadge() {
+    const totalItems = quoteCart.reduce((sum, item) => sum + item.quantity, 0);
+    
+    // Update notification badge (we'll use this as quote cart indicator for now)
+    const badge = document.querySelector('.notification-badge');
+    if (badge) {
+        badge.textContent = totalItems;
+        if (totalItems > 0) {
+            badge.style.display = 'flex';
+        }
+    }
+}
+
+// Add CSS animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// ==========================
 // CHART DATA
 // ==========================
 
@@ -52,7 +445,6 @@ function drawSpendingChart(period = '12') {
     const ctx = canvas.getContext('2d');
     const data = spendingData[period];
     
-    // Set canvas size for retina displays
     canvas.width = canvas.offsetWidth * 2;
     canvas.height = 700;
     ctx.scale(2, 2);
@@ -63,13 +455,11 @@ function drawSpendingChart(period = '12') {
     const chartWidth = width - padding * 2;
     const chartHeight = height - padding * 2;
     
-    // Clear canvas
     ctx.clearRect(0, 0, width, height);
     
     const maxSpending = Math.max(...data.spending);
     const maxEvents = Math.max(...data.events);
     
-    // Draw grid lines and Y-axis labels
     ctx.strokeStyle = '#e2e8f0';
     ctx.lineWidth = 1;
     for (let i = 0; i <= 5; i++) {
@@ -79,7 +469,6 @@ function drawSpendingChart(period = '12') {
         ctx.lineTo(width - padding, y);
         ctx.stroke();
         
-        // Y-axis labels
         const value = Math.round(maxSpending * (1 - i / 5) / 1000);
         ctx.fillStyle = '#64748b';
         ctx.font = '12px sans-serif';
@@ -87,7 +476,6 @@ function drawSpendingChart(period = '12') {
         ctx.fillText('$' + value + 'K', padding - 10, y + 4);
     }
     
-    // Draw spending line
     ctx.strokeStyle = '#3b82f6';
     ctx.lineWidth = 3;
     ctx.lineJoin = 'round';
@@ -102,7 +490,6 @@ function drawSpendingChart(period = '12') {
     });
     ctx.stroke();
     
-    // Draw spending points
     data.spending.forEach((value, i) => {
         const x = padding + (chartWidth / (data.labels.length - 1)) * i;
         const y = padding + chartHeight - (value / maxSpending) * chartHeight;
@@ -116,7 +503,6 @@ function drawSpendingChart(period = '12') {
         ctx.stroke();
     });
     
-    // Draw savings line
     ctx.strokeStyle = '#10b981';
     ctx.lineWidth = 3;
     ctx.lineJoin = 'round';
@@ -131,7 +517,6 @@ function drawSpendingChart(period = '12') {
     });
     ctx.stroke();
     
-    // Draw savings points
     data.savings.forEach((value, i) => {
         const x = padding + (chartWidth / (data.labels.length - 1)) * i;
         const y = padding + chartHeight - (value / maxSpending) * chartHeight;
@@ -142,7 +527,6 @@ function drawSpendingChart(period = '12') {
         ctx.fill();
     });
     
-    // Draw events bars
     const barWidth = (chartWidth / data.labels.length) * 0.3;
     data.events.forEach((value, i) => {
         const x = padding + (chartWidth / (data.labels.length - 1)) * i - barWidth / 2;
@@ -153,7 +537,6 @@ function drawSpendingChart(period = '12') {
         ctx.fillRect(x, y, barWidth, barHeight);
     });
     
-    // Draw X-axis labels
     ctx.fillStyle = '#64748b';
     ctx.font = '12px sans-serif';
     ctx.textAlign = 'center';
@@ -170,7 +553,6 @@ function drawCarbonChart(period = '12') {
     const ctx = canvas.getContext('2d');
     const data = carbonData[period];
     
-    // Set canvas size for retina displays
     canvas.width = canvas.offsetWidth * 2;
     canvas.height = 700;
     ctx.scale(2, 2);
@@ -181,12 +563,10 @@ function drawCarbonChart(period = '12') {
     const chartWidth = width - padding * 2;
     const chartHeight = height - padding * 2;
     
-    // Clear canvas
     ctx.clearRect(0, 0, width, height);
     
     const maxValue = Math.max(...data.baseline);
     
-    // Draw grid lines and Y-axis labels
     ctx.strokeStyle = '#e2e8f0';
     ctx.lineWidth = 1;
     for (let i = 0; i <= 5; i++) {
@@ -196,7 +576,6 @@ function drawCarbonChart(period = '12') {
         ctx.lineTo(width - padding, y);
         ctx.stroke();
         
-        // Y-axis labels
         const value = (maxValue * (1 - i / 5)).toFixed(1);
         ctx.fillStyle = '#64748b';
         ctx.font = '12px sans-serif';
@@ -204,33 +583,28 @@ function drawCarbonChart(period = '12') {
         ctx.fillText(value + 't', padding - 10, y + 4);
     }
     
-    // Draw bars
     const barWidth = (chartWidth / data.labels.length) * 0.35;
     const barSpacing = (chartWidth / data.labels.length);
     
     data.labels.forEach((label, i) => {
         const x = padding + barSpacing * i + (barSpacing - barWidth * 2) / 2;
         
-        // Baseline bar (faded red - diesel only)
         const baselineHeight = (data.baseline[i] / maxValue) * chartHeight;
         const baselineY = height - padding - baselineHeight;
         ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
         ctx.fillRect(x, baselineY, barWidth, baselineHeight);
         
-        // Avoided bar (green - hybrid savings)
         const avoidedHeight = (data.avoided[i] / maxValue) * chartHeight;
         const avoidedY = height - padding - avoidedHeight;
         ctx.fillStyle = '#10b981';
         ctx.fillRect(x + barWidth, avoidedY, barWidth, avoidedHeight);
         
-        // Value labels on avoided bars
         ctx.fillStyle = '#047857';
         ctx.font = 'bold 11px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(data.avoided[i].toFixed(1) + 't', x + barWidth * 1.5, avoidedY - 5);
     });
     
-    // Draw X-axis labels
     ctx.fillStyle = '#64748b';
     ctx.font = '12px sans-serif';
     ctx.textAlign = 'center';
@@ -239,10 +613,6 @@ function drawCarbonChart(period = '12') {
         ctx.fillText(label, x, height - padding + 20);
     });
 }
-
-// ==========================
-// CHART UPDATE FUNCTIONS
-// ==========================
 
 function updateSpendingChart(period) {
     drawSpendingChart(period);
@@ -257,20 +627,16 @@ function updateCarbonChart(period) {
 // ==========================
 
 function showPage(pageId) {
-    // Hide all pages
     document.querySelectorAll('.page').forEach(page => {
         page.classList.remove('active');
     });
     
-    // Remove active from all nav items
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
     });
     
-    // Show selected page
     document.getElementById(pageId).classList.add('active');
     
-    // Add active to clicked nav item
     if (event && event.target) {
         const navItem = event.target.closest('.nav-item');
         if (navItem) {
@@ -278,12 +644,12 @@ function showPage(pageId) {
         }
     }
     
-    // Redraw charts when navigating to analytics or sustainability pages
-    // Delay ensures page is visible before drawing
     if (pageId === 'analytics') {
         setTimeout(() => drawSpendingChart('12'), 100);
     } else if (pageId === 'sustainability') {
         setTimeout(() => drawCarbonChart('12'), 100);
+    } else if (pageId === 'equipment') {
+        setTimeout(() => updateEquipmentDisplay(), 50);
     }
 }
 
@@ -302,7 +668,6 @@ function sendChatMessage() {
     
     if (!message) return;
     
-    // Add user message
     const messagesDiv = document.getElementById('chatMessages');
     messagesDiv.innerHTML += `
         <div class="chat-message user-message" style="flex-direction: row-reverse;">
@@ -314,7 +679,6 @@ function sendChatMessage() {
     input.value = '';
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
     
-    // Simulate AI response
     setTimeout(() => {
         messagesDiv.innerHTML += `
             <div class="chat-message">
@@ -328,10 +692,6 @@ function sendChatMessage() {
     }, 1000);
 }
 
-// ==========================
-// QUOTE GENERATION
-// ==========================
-
 function generateQuote() {
     const quoteResult = document.getElementById('quoteResult');
     if (quoteResult) {
@@ -339,10 +699,6 @@ function generateQuote() {
         quoteResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 }
-
-// ==========================
-// UTILITY FUNCTIONS
-// ==========================
 
 function escapeHtml(text) {
     const div = document.createElement('div');
@@ -354,21 +710,18 @@ function escapeHtml(text) {
 // INITIALIZATION
 // ==========================
 
-// Initialize charts when page loads
 window.addEventListener('load', () => {
-    // Draw charts with a small delay to ensure DOM is ready
     setTimeout(() => {
         drawSpendingChart('12');
         drawCarbonChart('12');
+        updateEquipmentDisplay();
     }, 100);
 });
 
-// Handle window resize - redraw charts
 let resizeTimeout;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
-        // Only redraw if charts are visible
         const analyticsPage = document.getElementById('analytics');
         const sustainabilityPage = document.getElementById('sustainability');
         
@@ -381,17 +734,16 @@ window.addEventListener('resize', () => {
     }, 250);
 });
 
-// ==========================
-// EXPORT FOR DEBUGGING
-// ==========================
-
-// Make functions available in console for debugging
 if (typeof window !== 'undefined') {
     window.cesPortal = {
         drawSpendingChart,
         drawCarbonChart,
         showPage,
         toggleChat,
-        generateQuote
+        generateQuote,
+        filterEquipment,
+        addToQuote,
+        equipmentInventory,
+        quoteCart
     };
 }

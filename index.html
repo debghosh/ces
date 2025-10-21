@@ -824,6 +824,8 @@
             </div>
             
             <!-- Equipment Catalog -->
+
+            <!-- Equipment Catalog -->
             <div id="equipment" class="page">
                 <div class="page-header">
                     <h1 class="page-title">Equipment Catalog</h1>
@@ -831,106 +833,41 @@
                 </div>
                 
                 <div class="tabs">
-                    <div class="tab active">All Equipment</div>
-                    <div class="tab">Generators</div>
-                    <div class="tab">Battery Storage</div>
-                    <div class="tab">Hybrid Systems</div>
-                    <div class="tab">Accessories</div>
+                    <div class="tab active" onclick="setEquipmentCategory('all')">All Equipment</div>
+                    <div class="tab" onclick="setEquipmentCategory('generator')">Generators</div>
+                    <div class="tab" onclick="setEquipmentCategory('battery')">Battery Storage</div>
+                    <div class="tab" onclick="setEquipmentCategory('hybrid')">Hybrid Systems</div>
+                    <div class="tab" onclick="setEquipmentCategory('accessory')">Accessories</div>
                 </div>
                 
                 <div class="filters">
-                    <select class="filter-select">
-                        <option>All Locations</option>
-                        <option>Austin, TX</option>
-                        <option>Dallas, TX</option>
-                        <option>Houston, TX</option>
+                    <select class="filter-select" id="equipmentLocationFilter" onchange="setEquipmentLocation(this.value)">
+                        <option value="all">All Locations</option>
+                        <option value="Austin">Austin, TX</option>
+                        <option value="Dallas">Dallas, TX</option>
+                        <option value="Houston">Houston, TX</option>
                     </select>
-                    <select class="filter-select">
-                        <option>All Power Ranges</option>
-                        <option>Under 100kW</option>
-                        <option>100-300kW</option>
-                        <option>300-500kW</option>
-                        <option>500kW+</option>
+                    <select class="filter-select" id="equipmentPowerFilter" onchange="setEquipmentPowerRange(this.value)">
+                        <option value="all">All Power Ranges</option>
+                        <option value="under100">Under 100kW</option>
+                        <option value="100-300">100-300kW</option>
+                        <option value="300-500">300-500kW</option>
+                        <option value="500plus">500kW+</option>
                     </select>
-                    <select class="filter-select">
-                        <option>Available Now</option>
-                        <option>Next 7 Days</option>
-                        <option>Next 30 Days</option>
+                    <select class="filter-select" id="equipmentAvailabilityFilter" onchange="setEquipmentAvailability(this.value)">
+                        <option value="all">All Availability</option>
+                        <option value="now">Available Now</option>
+                        <option value="7days">Next 7 Days</option>
+                        <option value="30days">Next 30 Days</option>
                     </select>
                     <div class="search-box">
                         <span class="search-icon">🔍</span>
-                        <input type="text" placeholder="Search equipment...">
+                        <input type="text" placeholder="Search equipment..." id="equipmentSearch" oninput="searchEquipment(this.value)">
                     </div>
                 </div>
                 
                 <div class="equipment-grid">
-                    <div class="equipment-card">
-                        <div class="equipment-image">
-                            ⚡
-                            <div class="equipment-badge">AVAILABLE</div>
-                        </div>
-                        <div class="equipment-content">
-                            <div class="equipment-name">500kW Hybrid Generator</div>
-                            <div class="equipment-specs">Ultra-quiet • 70% fuel savings • GPS tracked</div>
-                            <div class="equipment-price">$1,200<span style="font-size: 0.5em; color: #64748b;">/day</span></div>
-                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                                <span class="badge badge-success">12 Available</span>
-                                <span class="badge badge-info">Austin</span>
-                            </div>
-                            <button class="btn btn-primary" style="width: 100%;">Add to Quote</button>
-                        </div>
-                    </div>
-                    
-                    <div class="equipment-card">
-                        <div class="equipment-image">
-                            🔋
-                            <div class="equipment-badge">AVAILABLE</div>
-                        </div>
-                        <div class="equipment-content">
-                            <div class="equipment-name">Battery Storage System</div>
-                            <div class="equipment-specs">Silent • Zero emissions • 8hr runtime</div>
-                            <div class="equipment-price">$800<span style="font-size: 0.5em; color: #64748b;">/day</span></div>
-                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                                <span class="badge badge-success">8 Available</span>
-                                <span class="badge badge-info">Dallas</span>
-                            </div>
-                            <button class="btn btn-primary" style="width: 100%;">Add to Quote</button>
-                        </div>
-                    </div>
-                    
-                    <div class="equipment-card">
-                        <div class="equipment-image">
-                            ⚡
-                            <div class="equipment-badge">AVAILABLE</div>
-                        </div>
-                        <div class="equipment-content">
-                            <div class="equipment-name">300kW Hybrid Generator</div>
-                            <div class="equipment-specs">Quiet operation • 65% fuel savings</div>
-                            <div class="equipment-price">$750<span style="font-size: 0.5em; color: #64748b;">/day</span></div>
-                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                                <span class="badge badge-success">15 Available</span>
-                                <span class="badge badge-info">Houston</span>
-                            </div>
-                            <button class="btn btn-primary" style="width: 100%;">Add to Quote</button>
-                        </div>
-                    </div>
-                    
-                    <div class="equipment-card">
-                        <div class="equipment-image">
-                            ⚡
-                            <div class="equipment-badge" style="background: #f59e0b;">LIMITED</div>
-                        </div>
-                        <div class="equipment-content">
-                            <div class="equipment-name">150kW Hybrid Generator</div>
-                            <div class="equipment-specs">Perfect for weddings • Silent mode</div>
-                            <div class="equipment-price">$450<span style="font-size: 0.5em; color: #64748b;">/day</span></div>
-                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                                <span class="badge badge-warning">3 Available</span>
-                                <span class="badge badge-info">Austin</span>
-                            </div>
-                            <button class="btn btn-primary" style="width: 100%;">Add to Quote</button>
-                        </div>
-                    </div>
+                    <!-- Equipment cards will be rendered here by JavaScript -->
                 </div>
             </div>
             
