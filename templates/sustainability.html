@@ -1,0 +1,77 @@
+                <div class="page-header">
+                    <h1 class="page-title">🌍 Sustainability Dashboard</h1>
+                    <p class="page-subtitle">Your environmental impact and green initiatives</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card green">
+                        <div class="stat-label">Total Carbon Saved (YTD)</div>
+                        <div class="stat-value">47.3t</div>
+                        <div class="stat-change">Equivalent to 1,098 trees</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Hybrid Solution Adoption</div>
+                        <div class="stat-value">89%</div>
+                        <div class="stat-change">Industry avg: 34%</div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-label">Fuel Savings</div>
+                        <div class="stat-value">12,847L</div>
+                        <div class="stat-change">vs. diesel-only solutions</div>
+                    </div>
+                    <div class="stat-card orange">
+                        <div class="stat-label">Carbon Offset Credits</div>
+                        <div class="stat-value">15.2t</div>
+                        <div class="stat-change">Purchased & verified</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Monthly Carbon Impact</h2>
+                        <select class="filter-select" onchange="updateCarbonChart(this.value)">
+                            <option value="12">Last 12 Months</option>
+                            <option value="6">Last 6 Months</option>
+                            <option value="3">This Quarter</option>
+                        </select>
+                    </div>
+                    <div style="padding: 20px; background: #f8fafc; border-radius: 12px;">
+                        <canvas id="carbonChart" style="width: 100%; height: 350px;"></canvas>
+                        <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 12px; background: #10b981; border-radius: 2px;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">CO₂ Avoided (Hybrid)</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 12px; background: #ef4444; border-radius: 2px; opacity: 0.3;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">Diesel Baseline</span>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 20px; padding: 15px; background: white; border-radius: 10px;">
+                            <div style="color: #64748b; font-size: 0.9em; margin-bottom: 5px;">Cumulative Impact This Year</div>
+                            <div style="font-size: 2em; font-weight: 700; color: #10b981;">47.3 tons CO₂</div>
+                            <div style="color: #64748b; font-size: 0.9em; margin-top: 5px;">Equivalent to planting 1,098 trees 🌳</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2 style="margin-bottom: 20px;">🏆 Sustainability Achievements</h2>
+                    <div class="grid-3">
+                        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">🌟</div>
+                            <h3 style="margin-bottom: 10px;">Green Leader</h3>
+                            <p style="opacity: 0.9;">Top 5% in sustainability adoption</p>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">🌱</div>
+                            <h3 style="margin-bottom: 10px;">Carbon Neutral</h3>
+                            <p style="opacity: 0.9;">All events offset in 2025</p>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">♻️</div>
+                            <h3 style="margin-bottom: 10px;">Hybrid Champion</h3>
+                            <p style="opacity: 0.9;">89% hybrid adoption rate</p>
+                        </div>
+                    </div>
+                </div>

@@ -1,0 +1,112 @@
+                <div class="page-header">
+                    <h1 class="page-title">Analytics & Reports</h1>
+                    <p class="page-subtitle">Data-driven insights into your events</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Events (YTD)</div>
+                        <div class="stat-value">47</div>
+                        <div class="stat-change">↗ +34% vs. last year</div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-label">Total Spend (YTD)</div>
+                        <div class="stat-value">$127K</div>
+                        <div class="stat-change">After $23.4K in savings</div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-label">Avg. Event Cost</div>
+                        <div class="stat-value">$2,702</div>
+                        <div class="stat-change">↘ 18% lower than industry</div>
+                    </div>
+                    <div class="stat-card orange">
+                        <div class="stat-label">Equipment Uptime</div>
+                        <div class="stat-value">99.8%</div>
+                        <div class="stat-change">Zero critical failures</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Event Spending Trends</h2>
+                        <select class="filter-select" onchange="updateSpendingChart(this.value)">
+                            <option value="12">Last 12 Months</option>
+                            <option value="6">Last 6 Months</option>
+                            <option value="3">This Quarter</option>
+                        </select>
+                    </div>
+                    <div style="padding: 20px; background: #f8fafc; border-radius: 12px;">
+                        <canvas id="spendingChart" style="width: 100%; height: 350px;"></canvas>
+                        <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 3px; background: #3b82f6;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">Total Spend</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 3px; background: #10b981;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">Savings</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 20px; height: 3px; background: #8b5cf6;"></div>
+                                <span style="color: #64748b; font-size: 0.9em;">Events Count</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="card">
+                        <h3 style="margin-bottom: 20px;">Most Used Equipment</h3>
+                        <div style="display: grid; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>500kW Hybrid Generator</span>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="progress-bar" style="width: 150px;">
+                                        <div class="progress-fill" style="width: 87%;"></div>
+                                    </div>
+                                    <span style="font-weight: 600;">87%</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>300kW Hybrid Generator</span>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="progress-bar" style="width: 150px;">
+                                        <div class="progress-fill" style="width: 64%;"></div>
+                                    </div>
+                                    <span style="font-weight: 600;">64%</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Battery Storage</span>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="progress-bar" style="width: 150px;">
+                                        <div class="progress-fill" style="width: 42%;"></div>
+                                    </div>
+                                    <span style="font-weight: 600;">42%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 style="margin-bottom: 20px;">Event Types Distribution</h3>
+                        <div style="display: grid; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                                <span>🎸 Music/Festivals</span>
+                                <span style="font-weight: 600;">42%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                                <span>🏢 Corporate Events</span>
+                                <span style="font-weight: 600;">28%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                                <span>💍 Weddings</span>
+                                <span style="font-weight: 600;">18%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                                <span>🎬 Film/Production</span>
+                                <span style="font-weight: 600;">12%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
