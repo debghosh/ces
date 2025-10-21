@@ -1,0 +1,191 @@
+                <div class="page-header">
+                    <h1 class="page-title">💼 Quotes & Templates</h1>
+                    <p class="page-subtitle">Create quotes, save templates, and manage proposals</p>
+                </div>
+                
+                <!-- Tabs for different sections -->
+                <div class="tabs">
+                    <div class="tab active" onclick="switchQuoteTab('new')">⚡ New Quote</div>
+                    <div class="tab" onclick="switchQuoteTab('active')">🛒 Active Quote</div>
+                    <div class="tab" onclick="switchQuoteTab('past')">📋 Past Quotes</div>
+                    <div class="tab" onclick="switchQuoteTab('templates')">📑 Templates</div>
+                </div>
+                
+                <!-- New Quote Section (Quick Quote Form) -->
+                <div id="newQuoteTab" class="quote-tab-content active">
+                    <div class="card">
+                        <div style="max-width: 800px; margin: 0 auto;">
+                            <div style="text-align: center; margin-bottom: 40px;">
+                                <div style="font-size: 3em; margin-bottom: 15px;">⚡</div>
+                                <h2 style="margin-bottom: 10px;">Quick Quote Generator</h2>
+                                <p style="color: #64748b;">Tell us about your event and we'll create the perfect power solution</p>
+                            </div>
+                            
+                            <div style="background: #f8fafc; padding: 30px; border-radius: 16px; margin-bottom: 30px;">
+                                <div style="margin-bottom: 25px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Quote Name</label>
+                                    <input type="text" id="newQuoteName" class="filter-select" style="width: 100%;" placeholder="e.g., Summer Music Festival 2025">
+                                </div>
+                                
+                                <div style="margin-bottom: 25px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Event Type</label>
+                                    <select class="filter-select" id="newQuoteEventType" style="width: 100%;">
+                                        <option>Select event type...</option>
+                                        <option>Music Festival / Concert</option>
+                                        <option>Corporate Event</option>
+                                        <option>Wedding</option>
+                                        <option>Film/TV Production</option>
+                                        <option>Sporting Event</option>
+                                        <option>Trade Show / Expo</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="grid-2" style="margin-bottom: 25px;">
+                                    <div>
+                                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Event Date</label>
+                                        <input type="date" id="newQuoteDate" class="filter-select" style="width: 100%;">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Duration</label>
+                                        <select class="filter-select" id="newQuoteDuration" style="width: 100%;">
+                                            <option>Single day</option>
+                                            <option>2-3 days</option>
+                                            <option>4-7 days</option>
+                                            <option>1-2 weeks</option>
+                                            <option>Longer</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 25px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Location (City, State)</label>
+                                    <input type="text" id="newQuoteLocation" class="filter-select" style="width: 100%;" placeholder="e.g., Austin, TX">
+                                </div>
+                                
+                                <div style="margin-bottom: 25px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Expected Attendance</label>
+                                    <input type="number" id="newQuoteAttendance" class="filter-select" style="width: 100%;" placeholder="Number of people">
+                                </div>
+                                
+                                <div style="margin-bottom: 25px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Indoor or Outdoor?</label>
+                                    <div style="display: flex; gap: 15px;">
+                                        <label style="flex: 1; cursor: pointer;">
+                                            <input type="radio" name="location-type" value="indoor" style="margin-right: 8px;">
+                                            <span>Indoor</span>
+                                        </label>
+                                        <label style="flex: 1; cursor: pointer;">
+                                            <input type="radio" name="location-type" value="outdoor" style="margin-right: 8px;">
+                                            <span>Outdoor</span>
+                                        </label>
+                                        <label style="flex: 1; cursor: pointer;">
+                                            <input type="radio" name="location-type" value="both" style="margin-right: 8px;">
+                                            <span>Both</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 25px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Special Requirements (Optional)</label>
+                                    <textarea class="filter-select" id="newQuoteRequirements" style="width: 100%; min-height: 100px; padding: 12px; resize: vertical;" placeholder="Silent operation needed, sustainability priority, specific power needs, etc."></textarea>
+                                </div>
+                                
+                                <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                                    <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                                        <span>🌍</span>
+                                        <span>Sustainability Preferences</span>
+                                    </h3>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="newQuoteHybrid" checked>
+                                        <span>Prioritize hybrid/battery solutions (recommended)</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="newQuoteOffset">
+                                        <span>Carbon offset my event</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="newQuoteReport">
+                                        <span>Include sustainability report for my stakeholders</span>
+                                    </label>
+                                </div>
+                                
+                                <button class="btn btn-primary" style="width: 100%; padding: 18px; font-size: 1.1em;" onclick="generateAIQuote()">
+                                    ⚡ Generate AI-Powered Quote
+                                </button>
+                            </div>
+                            
+                            <div id="aiQuoteResult" style="display: none;">
+                                <!-- AI Generated quote will appear here -->
+                            </div>
+                            
+                            <div style="text-align: center; margin-top: 30px; padding-top: 30px; border-top: 2px dashed #e2e8f0;">
+                                <p style="color: #64748b; margin-bottom: 15px;">Or manually add equipment to build your quote</p>
+                                <button class="btn btn-outline" onclick="showPage('equipment')">🔌 Browse Equipment Catalog</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Active Quote Section -->
+                <div id="activeQuoteTab" class="quote-tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">🛒 Active Quote</h2>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-outline" onclick="showPage('equipment')">+ Add Equipment</button>
+                            </div>
+                        </div>
+                        <div id="activeQuoteSection">
+                            <!-- Rendered by renderActiveQuoteSection() -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Past Quotes Section -->
+                <div id="pastQuotesTab" class="quote-tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">📋 Past Quotes</h2>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div class="search-box" style="min-width: 250px; margin: 0;">
+                                    <span class="search-icon">🔍</span>
+                                    <input type="text" placeholder="Search quotes..." oninput="searchQuotes(this.value)">
+                                </div>
+                                <select class="filter-select" onchange="sortQuotes(this.value)">
+                                    <option value="date">Sort by Date</option>
+                                    <option value="name">Sort by Name</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="pastQuotesSection">
+                            <!-- Rendered by renderPastQuotesSection() -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quote Templates Section -->
+                <div id="templatesTab" class="quote-tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">📑 Quote Templates</h2>
+                            <div style="color: #64748b; font-size: 0.9em;">
+                                Reusable quote templates for common events
+                            </div>
+                        </div>
+                        <div id="quoteTemplatesSection">
+                            <!-- Rendered by renderQuoteTemplatesSection() -->
+                        </div>
+                    </div>
+                </div>
+
+            <style>
+                .quote-tab-content {
+                    display: none;
+                }
+                
+                .quote-tab-content.active {
+                    display: block;
+                    animation: fadeIn 0.3s ease-in;
+                }
+            </style>            

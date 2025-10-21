@@ -1,0 +1,42 @@
+                <div class="page-header">
+                    <h1 class="page-title">Equipment Catalog</h1>
+                    <p class="page-subtitle">Browse our complete inventory with real-time availability</p>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="setEquipmentCategory('all')">All Equipment</div>
+                    <div class="tab" onclick="setEquipmentCategory('generator')">Generators</div>
+                    <div class="tab" onclick="setEquipmentCategory('battery')">Battery Storage</div>
+                    <div class="tab" onclick="setEquipmentCategory('hybrid')">Hybrid Systems</div>
+                    <div class="tab" onclick="setEquipmentCategory('accessory')">Accessories</div>
+                </div>
+                
+                <div class="filters">
+                    <select class="filter-select" id="equipmentLocationFilter" onchange="setEquipmentLocation(this.value)">
+                        <option value="all">All Locations</option>
+                        <option value="Austin">Austin, TX</option>
+                        <option value="Dallas">Dallas, TX</option>
+                        <option value="Houston">Houston, TX</option>
+                    </select>
+                    <select class="filter-select" id="equipmentPowerFilter" onchange="setEquipmentPowerRange(this.value)">
+                        <option value="all">All Power Ranges</option>
+                        <option value="under100">Under 100kW</option>
+                        <option value="100-300">100-300kW</option>
+                        <option value="300-500">300-500kW</option>
+                        <option value="500plus">500kW+</option>
+                    </select>
+                    <select class="filter-select" id="equipmentAvailabilityFilter" onchange="setEquipmentAvailability(this.value)">
+                        <option value="all">All Availability</option>
+                        <option value="now">Available Now</option>
+                        <option value="7days">Next 7 Days</option>
+                        <option value="30days">Next 30 Days</option>
+                    </select>
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Search equipment..." id="equipmentSearch" oninput="searchEquipment(this.value)">
+                    </div>
+                </div>
+                
+                <div class="equipment-grid">
+                    <!-- Equipment cards will be rendered here by JavaScript -->
+                </div>

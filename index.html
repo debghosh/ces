@@ -40,9 +40,9 @@
                 <span class="nav-icon">🤖</span>
                 <span>AI Recommendations</span>
             </div>
-            <div class="nav-item" onclick="showPage('quotes')" data-page="quotes">
+            <div class="nav-item" onclick="navigateTo('quotes')" data-page="quotes">
                 <span class="nav-icon">⚡</span>
-                <span>Quick Quote</span>
+                <span>Quote</span>
             </div>
             <div class="nav-item" onclick="showPage('my-events')" data-page="my-events">
                 <span class="nav-icon">🎪</span>
@@ -54,7 +54,7 @@
             </div>
             
             <div class="nav-section-title">Resources</div>
-            <div class="nav-item" onclick="showPage('equipment')" data-page="equipment">
+            <div class="nav-item" onclick="navigateTo('equipment')" data-page="equipment">
                 <span class="nav-icon">🔌</span>
                 <span>Equipment Catalog</span>
             </div>
@@ -453,7 +453,6 @@
             
             
             <!-- Quotes Page (replaces Quick Quote) -->
-<!-- Quotes Page -->
             <div id="quotes" class="page">
                 <div class="page-header">
                     <h1 class="page-title">💼 Quotes & Templates</h1>
@@ -849,8 +848,6 @@
                 </div>
             </div>
             
-            <!-- Equipment Catalog -->
-
             <!-- Equipment Catalog -->
             <div id="equipment" class="page">
                 <div class="page-header">
