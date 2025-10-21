@@ -1,7 +1,13 @@
 // ==========================
-// EQUIPMENT DATA
+// CES POWER PRO - CUSTOMER PORTAL
+// Clean, Consolidated JavaScript
 // ==========================
 
+// ==========================
+// DATA STRUCTURES
+// ==========================
+
+// Equipment inventory
 const equipmentInventory = [
     {
         id: 'gen-500-hybrid-1',
@@ -161,14 +167,59 @@ const equipmentInventory = [
     }
 ];
 
-// Quote cart to store selected equipment
+// Chart data
+const spendingData = {
+    12: {
+        labels: ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+        spending: [8500, 12300, 9800, 11200, 14500, 13800, 15200, 12900, 14100, 13500, 11800, 9200],
+        savings: [1200, 1800, 1500, 1700, 2100, 2000, 2300, 1900, 2100, 2000, 1800, 1400],
+        events: [3, 5, 4, 4, 6, 5, 6, 5, 5, 5, 4, 3]
+    },
+    6: {
+        labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+        spending: [15200, 12900, 14100, 13500, 11800, 9200],
+        savings: [2300, 1900, 2100, 2000, 1800, 1400],
+        events: [6, 5, 5, 5, 4, 3]
+    },
+    3: {
+        labels: ['Aug', 'Sep', 'Oct'],
+        spending: [13500, 11800, 9200],
+        savings: [2000, 1800, 1400],
+        events: [5, 4, 3]
+    }
+};
+
+const carbonData = {
+    12: {
+        labels: ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+        avoided: [2.8, 4.2, 3.5, 3.9, 5.1, 4.8, 5.4, 4.5, 4.9, 4.7, 4.1, 3.2],
+        baseline: [4.5, 6.8, 5.6, 6.3, 8.2, 7.7, 8.7, 7.3, 7.9, 7.6, 6.6, 5.2]
+    },
+    6: {
+        labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+        avoided: [5.4, 4.5, 4.9, 4.7, 4.1, 3.2],
+        baseline: [8.7, 7.3, 7.9, 7.6, 6.6, 5.2]
+    },
+    3: {
+        labels: ['Aug', 'Sep', 'Oct'],
+        avoided: [4.7, 4.1, 3.2],
+        baseline: [7.6, 6.6, 5.2]
+    }
+};
+
+// State management
 let quoteCart = [];
+let savedQuotes = [];
+let quoteTemplates = [];
+let activeQuote = {
+    id: null,
+    name: '',
+    items: [],
+    eventDetails: {},
+    createdAt: null,
+    updatedAt: null
+};
 
-// ==========================
-// EQUIPMENT FILTERING
-// ==========================
-
-// Current filter state
 let equipmentFilters = {
     category: 'all',
     location: 'all',
@@ -177,8 +228,109 @@ let equipmentFilters = {
     searchTerm: ''
 };
 
+let quotesPageFilters = {
+    searchTerm: '',
+    sortBy: 'date'
+};
+
+// ==========================
+// INITIALIZATION
+// ==========================
+
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        // Initialize charts
+        drawSpendingChart('12');
+        drawCarbonChart('12');
+        
+        // Initialize equipment display
+        updateEquipmentDisplay();
+        
+        // Initialize quotes system from localStorage
+        initializeQuotesSystem();
+        
+        // Render quotes page if active
+        if (document.getElementById('quotes')?.classList.contains('active')) {
+            renderQuotesPage();
+        }
+    }, 100);
+});
+
+// Handle window resize - redraw charts
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        const analyticsPage = document.getElementById('analytics');
+        const sustainabilityPage = document.getElementById('sustainability');
+        
+        if (analyticsPage?.classList.contains('active')) {
+            drawSpendingChart('12');
+        }
+        if (sustainabilityPage?.classList.contains('active')) {
+            drawCarbonChart('12');
+        }
+    }, 250);
+});
+
+// Add CSS animations for notifications
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(400px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(400px); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+
+// ==========================
+// NAVIGATION
+// ==========================
+
+function showPage(pageId) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+    
+    // Remove active from all nav items
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    
+    // Show selected page
+    document.getElementById(pageId)?.classList.add('active');
+    
+    // Add active to clicked nav item
+    if (event?.target) {
+        event.target.closest('.nav-item')?.classList.add('active');
+    }
+    
+    // Page-specific initialization
+    setTimeout(() => {
+        switch(pageId) {
+            case 'analytics':
+                drawSpendingChart('12');
+                break;
+            case 'sustainability':
+                drawCarbonChart('12');
+                break;
+            case 'equipment':
+                updateEquipmentDisplay();
+                break;
+            case 'quotes':
+                renderQuotesPage();
+                break;
+        }
+    }, 50);
+}
+
+// ==========================
+// EQUIPMENT CATALOG
+// ==========================
+
 function filterEquipment() {
-    let filtered = equipmentInventory.filter(item => {
+    return equipmentInventory.filter(item => {
         // Category filter
         if (equipmentFilters.category !== 'all') {
             if (equipmentFilters.category === 'generator' && item.category !== 'generator') return false;
@@ -207,16 +359,14 @@ function filterEquipment() {
         
         // Search filter
         if (equipmentFilters.searchTerm) {
-            const searchLower = equipmentFilters.searchTerm.toLowerCase();
-            return item.name.toLowerCase().includes(searchLower) || 
-                   item.specs.toLowerCase().includes(searchLower) ||
-                   item.location.toLowerCase().includes(searchLower);
+            const search = equipmentFilters.searchTerm.toLowerCase();
+            return item.name.toLowerCase().includes(search) || 
+                   item.specs.toLowerCase().includes(search) ||
+                   item.location.toLowerCase().includes(search);
         }
         
         return true;
     });
-    
-    return filtered;
 }
 
 function renderEquipmentGrid(equipment) {
@@ -265,19 +415,13 @@ function renderEquipmentGrid(equipment) {
 }
 
 function updateEquipmentDisplay() {
-    const filtered = filterEquipment();
-    renderEquipmentGrid(filtered);
+    renderEquipmentGrid(filterEquipment());
 }
 
 function setEquipmentCategory(category) {
     equipmentFilters.category = category;
-    
-    // Update active tab
-    document.querySelectorAll('#equipment .tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    event.target.classList.add('active');
-    
+    document.querySelectorAll('#equipment .tab').forEach(tab => tab.classList.remove('active'));
+    if (event?.target) event.target.classList.add('active');
     updateEquipmentDisplay();
 }
 
@@ -301,7 +445,10 @@ function searchEquipment(searchTerm) {
     updateEquipmentDisplay();
 }
 
-// Update the addToQuote function - replace the entire function
+// ==========================
+// QUOTE CART MANAGEMENT
+// ==========================
+
 function addToQuote(equipmentId) {
     const equipment = equipmentInventory.find(item => item.id === equipmentId);
     if (!equipment) return;
@@ -310,10 +457,8 @@ function addToQuote(equipmentId) {
     const existingIndex = quoteCart.findIndex(item => item.id === equipmentId);
     
     if (existingIndex >= 0) {
-        // Increment quantity
         quoteCart[existingIndex].quantity++;
     } else {
-        // Add new item
         quoteCart.push({
             ...equipment,
             quantity: 1,
@@ -321,11 +466,13 @@ function addToQuote(equipmentId) {
         });
     }
     
-    // Show confirmation
-    showNotification(`✅ ${equipment.name} added to quote!`, 'success');
+    // Update badge
     updateQuoteCartBadge();
     
-    // Show additional notification with action - STAYS FOR 10 SECONDS
+    // Show success notification
+    showNotification(`✅ ${equipment.name} added to quote!`, 'success');
+    
+    // Show clickable "View Quote" notification
     setTimeout(() => {
         const notification = document.createElement('div');
         notification.style.cssText = `
@@ -363,7 +510,6 @@ function addToQuote(equipmentId) {
         
         document.body.appendChild(notification);
         
-        // Remove after 10 seconds instead of 5
         setTimeout(() => {
             notification.style.animation = 'slideOut 0.3s ease-out';
             setTimeout(() => notification.remove(), 300);
@@ -371,476 +517,46 @@ function addToQuote(equipmentId) {
     }, 500);
 }
 
-function showNotification(message, type = 'info') {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 90px;
-        right: 30px;
-        background: ${type === 'success' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'};
-        color: white;
-        padding: 16px 24px;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        z-index: 10000;
-        animation: slideIn 0.3s ease-out;
-        font-weight: 500;
-    `;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-}
-
 function updateQuoteCartBadge() {
     const totalItems = quoteCart.reduce((sum, item) => sum + item.quantity, 0);
-    
-    // Update notification badge
     const badge = document.getElementById('quoteBadge');
+    
     if (badge) {
         badge.textContent = totalItems;
-        if (totalItems > 0) {
-            badge.style.display = 'flex';
-        } else {
-            badge.style.display = 'none';
-        }
+        badge.style.display = totalItems > 0 ? 'flex' : 'none';
     }
 }
 
-// Add CSS animation
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    @keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);
-
-// ==========================
-// CHART DATA
-// ==========================
-
-const spendingData = {
-    12: {
-        labels: ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
-        spending: [8500, 12300, 9800, 11200, 14500, 13800, 15200, 12900, 14100, 13500, 11800, 9200],
-        savings: [1200, 1800, 1500, 1700, 2100, 2000, 2300, 1900, 2100, 2000, 1800, 1400],
-        events: [3, 5, 4, 4, 6, 5, 6, 5, 5, 5, 4, 3]
-    },
-    6: {
-        labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
-        spending: [15200, 12900, 14100, 13500, 11800, 9200],
-        savings: [2300, 1900, 2100, 2000, 1800, 1400],
-        events: [6, 5, 5, 5, 4, 3]
-    },
-    3: {
-        labels: ['Aug', 'Sep', 'Oct'],
-        spending: [13500, 11800, 9200],
-        savings: [2000, 1800, 1400],
-        events: [5, 4, 3]
-    }
-};
-
-const carbonData = {
-    12: {
-        labels: ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
-        avoided: [2.8, 4.2, 3.5, 3.9, 5.1, 4.8, 5.4, 4.5, 4.9, 4.7, 4.1, 3.2],
-        baseline: [4.5, 6.8, 5.6, 6.3, 8.2, 7.7, 8.7, 7.3, 7.9, 7.6, 6.6, 5.2]
-    },
-    6: {
-        labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
-        avoided: [5.4, 4.5, 4.9, 4.7, 4.1, 3.2],
-        baseline: [8.7, 7.3, 7.9, 7.6, 6.6, 5.2]
-    },
-    3: {
-        labels: ['Aug', 'Sep', 'Oct'],
-        avoided: [4.7, 4.1, 3.2],
-        baseline: [7.6, 6.6, 5.2]
-    }
-};
-
-// ==========================
-// CHART DRAWING FUNCTIONS
-// ==========================
-
-function drawSpendingChart(period = '12') {
-    const canvas = document.getElementById('spendingChart');
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    const data = spendingData[period];
-    
-    canvas.width = canvas.offsetWidth * 2;
-    canvas.height = 700;
-    ctx.scale(2, 2);
-    
-    const width = canvas.offsetWidth;
-    const height = 350;
-    const padding = 50;
-    const chartWidth = width - padding * 2;
-    const chartHeight = height - padding * 2;
-    
-    ctx.clearRect(0, 0, width, height);
-    
-    const maxSpending = Math.max(...data.spending);
-    const maxEvents = Math.max(...data.events);
-    
-    ctx.strokeStyle = '#e2e8f0';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 5; i++) {
-        const y = padding + (chartHeight / 5) * i;
-        ctx.beginPath();
-        ctx.moveTo(padding, y);
-        ctx.lineTo(width - padding, y);
-        ctx.stroke();
-        
-        const value = Math.round(maxSpending * (1 - i / 5) / 1000);
-        ctx.fillStyle = '#64748b';
-        ctx.font = '12px sans-serif';
-        ctx.textAlign = 'right';
-        ctx.fillText('$' + value + 'K', padding - 10, y + 4);
-    }
-    
-    ctx.strokeStyle = '#3b82f6';
-    ctx.lineWidth = 3;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    
-    data.spending.forEach((value, i) => {
-        const x = padding + (chartWidth / (data.labels.length - 1)) * i;
-        const y = padding + chartHeight - (value / maxSpending) * chartHeight;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-    
-    data.spending.forEach((value, i) => {
-        const x = padding + (chartWidth / (data.labels.length - 1)) * i;
-        const y = padding + chartHeight - (value / maxSpending) * chartHeight;
-        
-        ctx.beginPath();
-        ctx.arc(x, y, 5, 0, Math.PI * 2);
-        ctx.fillStyle = '#3b82f6';
-        ctx.fill();
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-    });
-    
-    ctx.strokeStyle = '#10b981';
-    ctx.lineWidth = 3;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    
-    data.savings.forEach((value, i) => {
-        const x = padding + (chartWidth / (data.labels.length - 1)) * i;
-        const y = padding + chartHeight - (value / maxSpending) * chartHeight;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-    
-    data.savings.forEach((value, i) => {
-        const x = padding + (chartWidth / (data.labels.length - 1)) * i;
-        const y = padding + chartHeight - (value / maxSpending) * chartHeight;
-        
-        ctx.beginPath();
-        ctx.arc(x, y, 4, 0, Math.PI * 2);
-        ctx.fillStyle = '#10b981';
-        ctx.fill();
-    });
-    
-    const barWidth = (chartWidth / data.labels.length) * 0.3;
-    data.events.forEach((value, i) => {
-        const x = padding + (chartWidth / (data.labels.length - 1)) * i - barWidth / 2;
-        const barHeight = (value / maxEvents) * (chartHeight * 0.3);
-        const y = height - padding - barHeight;
-        
-        ctx.fillStyle = '#8b5cf6';
-        ctx.fillRect(x, y, barWidth, barHeight);
-    });
-    
-    ctx.fillStyle = '#64748b';
-    ctx.font = '12px sans-serif';
-    ctx.textAlign = 'center';
-    data.labels.forEach((label, i) => {
-        const x = padding + (chartWidth / (data.labels.length - 1)) * i;
-        ctx.fillText(label, x, height - padding + 20);
-    });
+function removeFromCart(index) {
+    const item = quoteCart[index];
+    quoteCart.splice(index, 1);
+    updateQuoteCartBadge();
+    renderQuoteCartPanel();
+    showNotification(`${item.name} removed from cart`, 'info');
 }
 
-function drawCarbonChart(period = '12') {
-    const canvas = document.getElementById('carbonChart');
-    if (!canvas) return;
+function updateCartQuantity(index, change) {
+    quoteCart[index].quantity += change;
     
-    const ctx = canvas.getContext('2d');
-    const data = carbonData[period];
-    
-    canvas.width = canvas.offsetWidth * 2;
-    canvas.height = 700;
-    ctx.scale(2, 2);
-    
-    const width = canvas.offsetWidth;
-    const height = 350;
-    const padding = 50;
-    const chartWidth = width - padding * 2;
-    const chartHeight = height - padding * 2;
-    
-    ctx.clearRect(0, 0, width, height);
-    
-    const maxValue = Math.max(...data.baseline);
-    
-    ctx.strokeStyle = '#e2e8f0';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 5; i++) {
-        const y = padding + (chartHeight / 5) * i;
-        ctx.beginPath();
-        ctx.moveTo(padding, y);
-        ctx.lineTo(width - padding, y);
-        ctx.stroke();
-        
-        const value = (maxValue * (1 - i / 5)).toFixed(1);
-        ctx.fillStyle = '#64748b';
-        ctx.font = '12px sans-serif';
-        ctx.textAlign = 'right';
-        ctx.fillText(value + 't', padding - 10, y + 4);
+    if (quoteCart[index].quantity <= 0) {
+        removeFromCart(index);
+    } else {
+        renderQuoteCartPanel();
+        updateQuoteCartBadge();
     }
-    
-    const barWidth = (chartWidth / data.labels.length) * 0.35;
-    const barSpacing = (chartWidth / data.labels.length);
-    
-    data.labels.forEach((label, i) => {
-        const x = padding + barSpacing * i + (barSpacing - barWidth * 2) / 2;
-        
-        const baselineHeight = (data.baseline[i] / maxValue) * chartHeight;
-        const baselineY = height - padding - baselineHeight;
-        ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
-        ctx.fillRect(x, baselineY, barWidth, baselineHeight);
-        
-        const avoidedHeight = (data.avoided[i] / maxValue) * chartHeight;
-        const avoidedY = height - padding - avoidedHeight;
-        ctx.fillStyle = '#10b981';
-        ctx.fillRect(x + barWidth, avoidedY, barWidth, avoidedHeight);
-        
-        ctx.fillStyle = '#047857';
-        ctx.font = 'bold 11px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(data.avoided[i].toFixed(1) + 't', x + barWidth * 1.5, avoidedY - 5);
-    });
-    
-    ctx.fillStyle = '#64748b';
-    ctx.font = '12px sans-serif';
-    ctx.textAlign = 'center';
-    data.labels.forEach((label, i) => {
-        const x = padding + barSpacing * i + barSpacing / 2;
-        ctx.fillText(label, x, height - padding + 20);
-    });
 }
 
-function updateSpendingChart(period) {
-    drawSpendingChart(period);
-}
-
-function updateCarbonChart(period) {
-    drawCarbonChart(period);
-}
-
-// ==========================
-// PAGE NAVIGATION
-// ==========================
-
-function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-    });
-    
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    
-    document.getElementById(pageId).classList.add('active');
-    
-    if (event && event.target) {
-        const navItem = event.target.closest('.nav-item');
-        if (navItem) {
-            navItem.classList.add('active');
-        }
-    }
-    
-    if (pageId === 'analytics') {
-        setTimeout(() => drawSpendingChart('12'), 100);
-    } else if (pageId === 'sustainability') {
-        setTimeout(() => drawCarbonChart('12'), 100);
-    } else if (pageId === 'equipment') {
-        setTimeout(() => updateEquipmentDisplay(), 50);
+function clearCart() {
+    if (confirm('Clear all items from cart?')) {
+        quoteCart = [];
+        updateQuoteCartBadge();
+        renderQuoteCartPanel();
+        showNotification('Cart cleared', 'info');
     }
 }
 
 // ==========================
-// CHAT FUNCTIONS
-// ==========================
-
-function toggleChat() {
-    const chatWindow = document.getElementById('chatWindow');
-    chatWindow.classList.toggle('open');
-}
-
-function sendChatMessage() {
-    const input = document.getElementById('chatInputField');
-    const message = input.value.trim();
-    
-    if (!message) return;
-    
-    const messagesDiv = document.getElementById('chatMessages');
-    messagesDiv.innerHTML += `
-        <div class="chat-message user-message" style="flex-direction: row-reverse;">
-            <div class="chat-avatar user-avatar">👤</div>
-            <div class="chat-bubble">${escapeHtml(message)}</div>
-        </div>
-    `;
-    
-    input.value = '';
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    
-    setTimeout(() => {
-        messagesDiv.innerHTML += `
-            <div class="chat-message">
-                <div class="chat-avatar ai-avatar">🤖</div>
-                <div class="chat-bubble">
-                    I'd be happy to help! Let me look that up for you right away. One moment...
-                </div>
-            </div>
-        `;
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }, 1000);
-}
-
-function generateQuote() {
-    const quoteResult = document.getElementById('quoteResult');
-    if (quoteResult) {
-        quoteResult.style.display = 'block';
-        quoteResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-}
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// ==========================
-// INITIALIZATION
-// ==========================
-
-window.addEventListener('load', () => {
-    setTimeout(() => {
-        drawSpendingChart('12');
-        drawCarbonChart('12');
-        updateEquipmentDisplay();
-    }, 100);
-});
-
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        const analyticsPage = document.getElementById('analytics');
-        const sustainabilityPage = document.getElementById('sustainability');
-        
-        if (analyticsPage && analyticsPage.classList.contains('active')) {
-            drawSpendingChart('12');
-        }
-        if (sustainabilityPage && sustainabilityPage.classList.contains('active')) {
-            drawCarbonChart('12');
-        }
-    }, 250);
-});
-
-if (typeof window !== 'undefined') {
-    window.cesPortal = {
-        drawSpendingChart,
-        drawCarbonChart,
-        showPage,
-        toggleChat,
-        generateQuote,
-        filterEquipment,
-        addToQuote,
-        equipmentInventory,
-        quoteCart
-    };
-}
-
-// ==========================
-// QUOTES SYSTEM
-// ==========================
-
-// Saved quotes and templates (persisted to localStorage)
-let savedQuotes = [];
-let quoteTemplates = [];
-
-// Current active quote
-let activeQuote = {
-    id: null,
-    name: '',
-    items: [],
-    eventDetails: {},
-    createdAt: null,
-    updatedAt: null
-};
-
-// Initialize quotes from localStorage
-function initializeQuotesSystem() {
-    const savedQuotesData = localStorage.getItem('cespower_savedQuotes');
-    const templatesData = localStorage.getItem('cespower_quoteTemplates');
-    
-    if (savedQuotesData) {
-        savedQuotes = JSON.parse(savedQuotesData);
-    }
-    
-    if (templatesData) {
-        quoteTemplates = JSON.parse(templatesData);
-    }
-    
-    // Migrate quoteCart to activeQuote if exists
-    if (quoteCart.length > 0) {
-        activeQuote.items = quoteCart;
-    }
-}
-
-// Save quotes to localStorage
-function persistQuotes() {
-    localStorage.setItem('cespower_savedQuotes', JSON.stringify(savedQuotes));
-    localStorage.setItem('cespower_quoteTemplates', JSON.stringify(quoteTemplates));
-}
-
-// ==========================
-// QUOTE CART PANEL (Bell Icon Dropdown)
+// QUOTE CART PANEL (DROPDOWN)
 // ==========================
 
 function toggleQuoteCart() {
@@ -867,9 +583,7 @@ function createQuoteCartPanel() {
             <h3>Quote Cart</h3>
             <button class="quote-cart-close" onclick="toggleQuoteCart()">✕</button>
         </div>
-        <div class="quote-cart-content" id="quoteCartContent">
-            <!-- Content rendered by renderQuoteCartPanel() -->
-        </div>
+        <div class="quote-cart-content" id="quoteCartContent"></div>
     `;
     
     document.body.appendChild(panel);
@@ -890,11 +604,7 @@ function createQuoteCartPanel() {
             display: flex;
             flex-direction: column;
         }
-        
-        .quote-cart-panel.open {
-            right: 0;
-        }
-        
+        .quote-cart-panel.open { right: 0; }
         .quote-cart-header {
             padding: 20px;
             border-bottom: 1px solid #e2e8f0;
@@ -903,12 +613,7 @@ function createQuoteCartPanel() {
             align-items: center;
             background: #f8fafc;
         }
-        
-        .quote-cart-header h3 {
-            font-size: 1.2em;
-            color: #0f172a;
-        }
-        
+        .quote-cart-header h3 { font-size: 1.2em; color: #0f172a; }
         .quote-cart-close {
             background: none;
             border: none;
@@ -923,17 +628,8 @@ function createQuoteCartPanel() {
             justify-content: center;
             border-radius: 4px;
         }
-        
-        .quote-cart-close:hover {
-            background: #e2e8f0;
-        }
-        
-        .quote-cart-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        
+        .quote-cart-close:hover { background: #e2e8f0; }
+        .quote-cart-content { flex: 1; overflow-y: auto; padding: 20px; }
         .cart-item {
             padding: 15px;
             border: 1px solid #e2e8f0;
@@ -941,20 +637,13 @@ function createQuoteCartPanel() {
             margin-bottom: 12px;
             background: #f8fafc;
         }
-        
         .cart-item-header {
             display: flex;
             justify-content: space-between;
             align-items: start;
             margin-bottom: 10px;
         }
-        
-        .cart-item-name {
-            font-weight: 600;
-            color: #0f172a;
-            font-size: 0.95em;
-        }
-        
+        .cart-item-name { font-weight: 600; color: #0f172a; font-size: 0.95em; }
         .cart-item-remove {
             background: none;
             border: none;
@@ -963,20 +652,13 @@ function createQuoteCartPanel() {
             font-size: 1.1em;
             padding: 0;
         }
-        
         .cart-item-details {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 10px;
         }
-        
-        .cart-item-qty {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
+        .cart-item-qty { display: flex; align-items: center; gap: 10px; }
         .qty-btn {
             background: white;
             border: 1px solid #e2e8f0;
@@ -989,41 +671,29 @@ function createQuoteCartPanel() {
             justify-content: center;
             font-size: 0.9em;
         }
-        
-        .qty-btn:hover {
-            background: #f1f5f9;
-        }
-        
-        .cart-item-price {
-            font-weight: 600;
-            color: #3b82f6;
-        }
-        
+        .qty-btn:hover { background: #f1f5f9; }
+        .cart-item-price { font-weight: 600; color: #3b82f6; }
         .cart-empty {
             text-align: center;
             padding: 60px 20px;
             color: #94a3b8;
         }
-        
         .cart-empty-icon {
             font-size: 4em;
             margin-bottom: 15px;
             opacity: 0.3;
         }
-        
         .cart-summary {
             border-top: 2px solid #e2e8f0;
             padding: 15px 0;
             margin-top: 15px;
         }
-        
         .cart-summary-row {
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
             color: #64748b;
         }
-        
         .cart-summary-total {
             display: flex;
             justify-content: space-between;
@@ -1034,7 +704,6 @@ function createQuoteCartPanel() {
             padding-top: 10px;
             border-top: 1px solid #e2e8f0;
         }
-        
         .cart-actions {
             display: flex;
             flex-direction: column;
@@ -1061,7 +730,7 @@ function renderQuoteCartPanel() {
     }
     
     const subtotal = quoteCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const tax = subtotal * 0.08; // 8% tax
+    const tax = subtotal * 0.08;
     const total = subtotal + tax;
     
     content.innerHTML = `
@@ -1109,60 +778,59 @@ function renderQuoteCartPanel() {
     `;
 }
 
-function removeFromCart(index) {
-    const item = quoteCart[index];
-    quoteCart.splice(index, 1);
-    updateQuoteCartBadge();
-    renderQuoteCartPanel();
-    showNotification(`${item.name} removed from cart`, 'info');
-}
-
-function updateCartQuantity(index, change) {
-    quoteCart[index].quantity += change;
-    
-    if (quoteCart[index].quantity <= 0) {
-        removeFromCart(index);
-    } else {
-        renderQuoteCartPanel();
-        updateQuoteCartBadge();
-    }
-}
-
-function clearCart() {
-    if (confirm('Clear all items from cart?')) {
-        quoteCart = [];
-        updateQuoteCartBadge();
-        renderQuoteCartPanel();
-        showNotification('Cart cleared', 'info');
-    }
-}
-
 function viewFullQuote() {
-    toggleQuoteCart(); // Close panel
-    showPage('quotes'); // Navigate to quotes page
+    toggleQuoteCart();
+    showPage('quotes');
+    setTimeout(() => switchQuoteTab('active'), 100);
 }
 
-// Update the bell icon click handler
-function setupQuoteCartToggle() {
-    const bellIcon = document.querySelector('.notifications');
-    if (bellIcon) {
-        bellIcon.style.cursor = 'pointer';
-        bellIcon.onclick = toggleQuoteCart;
+// ==========================
+// QUOTES SYSTEM
+// ==========================
+
+function initializeQuotesSystem() {
+    const savedQuotesData = localStorage.getItem('cespower_savedQuotes');
+    const templatesData = localStorage.getItem('cespower_quoteTemplates');
+    
+    if (savedQuotesData) savedQuotes = JSON.parse(savedQuotesData);
+    if (templatesData) quoteTemplates = JSON.parse(templatesData);
+    
+    if (quoteCart.length > 0) activeQuote.items = quoteCart;
+}
+
+function persistQuotes() {
+    localStorage.setItem('cespower_savedQuotes', JSON.stringify(savedQuotes));
+    localStorage.setItem('cespower_quoteTemplates', JSON.stringify(quoteTemplates));
+}
+
+function switchQuoteTab(tabName) {
+    document.querySelectorAll('.quote-tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('#quotes .tab').forEach(tab => tab.classList.remove('active'));
+    
+    let contentId = '';
+    switch(tabName) {
+        case 'new':
+            contentId = 'newQuoteTab';
+            break;
+        case 'active':
+            contentId = 'activeQuoteTab';
+            renderActiveQuoteSection();
+            break;
+        case 'past':
+            contentId = 'pastQuotesTab';
+            renderPastQuotesSection();
+            break;
+        case 'templates':
+            contentId = 'templatesTab';
+            renderQuoteTemplatesSection();
+            break;
     }
+    
+    document.getElementById(contentId)?.classList.add('active');
+    if (event?.target) event.target.classList.add('active');
 }
-
-// ==========================
-// QUOTES PAGE MANAGEMENT
-// ==========================
-
-let quotesPageFilters = {
-    searchTerm: '',
-    sortBy: 'date', // date, name, total
-    showTemplates: false
-};
 
 function renderQuotesPage() {
-    // This will be called when navigating to quotes page
     renderActiveQuoteSection();
     renderPastQuotesSection();
     renderQuoteTemplatesSection();
@@ -1237,7 +905,6 @@ function renderPastQuotesSection() {
     const container = document.getElementById('pastQuotesSection');
     if (!container) return;
     
-    // Filter quotes based on search
     let filtered = savedQuotes.filter(quote => {
         if (!quotesPageFilters.searchTerm) return true;
         const search = quotesPageFilters.searchTerm.toLowerCase();
@@ -1245,7 +912,6 @@ function renderPastQuotesSection() {
                quote.items.some(item => item.name.toLowerCase().includes(search));
     });
     
-    // Sort quotes
     filtered.sort((a, b) => {
         if (quotesPageFilters.sortBy === 'date') {
             return new Date(b.createdAt) - new Date(a.createdAt);
@@ -1347,13 +1013,9 @@ function renderQuoteTemplatesSection() {
     }).join('');
 }
 
-// ==========================
-// QUOTE ACTIONS
-// ==========================
-
 function saveCurrentQuote() {
     const nameInput = document.getElementById('quoteNameInput');
-    const name = nameInput ? nameInput.value.trim() : '';
+    const name = nameInput?.value.trim();
     
     if (!name) {
         alert('Please enter a quote name');
@@ -1368,7 +1030,7 @@ function saveCurrentQuote() {
     const quote = {
         id: 'quote_' + Date.now(),
         name: name,
-        items: JSON.parse(JSON.stringify(quoteCart)), // Deep copy
+        items: JSON.parse(JSON.stringify(quoteCart)),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
     };
@@ -1382,7 +1044,7 @@ function saveCurrentQuote() {
 
 function saveQuoteAsTemplate() {
     const nameInput = document.getElementById('quoteNameInput');
-    let name = nameInput ? nameInput.value.trim() : '';
+    let name = nameInput?.value.trim();
     
     if (!name) {
         name = prompt('Enter template name:');
@@ -1419,7 +1081,6 @@ function loadQuote(quoteId) {
     renderActiveQuoteSection();
     showNotification(`📋 Quote "${quote.name}" loaded`, 'success');
     
-    // Scroll to active quote section
     document.getElementById('activeQuoteSection')?.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -1483,7 +1144,6 @@ function useTemplate(templateId) {
     renderActiveQuoteSection();
     showNotification(`✨ Template "${template.name}" loaded!`, 'success');
     
-    // Scroll to active quote section
     document.getElementById('activeQuoteSection')?.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -1523,49 +1183,6 @@ function sortQuotes(sortBy) {
 }
 
 // ==========================
-// QUOTES PAGE TAB SWITCHING
-// ==========================
-
-function switchQuoteTab(tabName) {
-    // Hide all tab contents
-    document.querySelectorAll('.quote-tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // Remove active from all tabs
-    document.querySelectorAll('#quotes .tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // Show selected tab content
-    let contentId = '';
-    switch(tabName) {
-        case 'new':
-            contentId = 'newQuoteTab';
-            break;
-        case 'active':
-            contentId = 'activeQuoteTab';
-            renderActiveQuoteSection();
-            break;
-        case 'past':
-            contentId = 'pastQuotesTab';
-            renderPastQuotesSection();
-            break;
-        case 'templates':
-            contentId = 'templatesTab';
-            renderQuoteTemplatesSection();
-            break;
-    }
-    
-    document.getElementById(contentId)?.classList.add('active');
-    
-    // Add active to clicked tab
-    if (event && event.target) {
-        event.target.classList.add('active');
-    }
-}
-
-// ==========================
 // AI QUOTE GENERATION
 // ==========================
 
@@ -1578,11 +1195,9 @@ function generateAIQuote() {
     const attendance = document.getElementById('newQuoteAttendance')?.value;
     const requirements = document.getElementById('newQuoteRequirements')?.value;
     
-    // Get location type
     const locationTypeRadio = document.querySelector('input[name="location-type"]:checked');
-    const locationType = locationTypeRadio ? locationTypeRadio.value : '';
+    const locationType = locationTypeRadio?.value || '';
     
-    // Validation
     if (!quoteName) {
         alert('Please enter a quote name');
         return;
@@ -1593,11 +1208,9 @@ function generateAIQuote() {
         return;
     }
     
-    // Generate AI recommendations based on inputs
     const recommendedEquipment = getAIRecommendedEquipment(eventType, attendance, locationType, requirements);
     
-    // Add recommended equipment to cart
-    quoteCart = []; // Clear existing cart
+    quoteCart = [];
     recommendedEquipment.forEach(equipId => {
         const equipment = equipmentInventory.find(e => e.id === equipId.id);
         if (equipment) {
@@ -1609,20 +1222,13 @@ function generateAIQuote() {
         }
     });
     
-    // Save quote name
     activeQuote.name = quoteName;
-    
     updateQuoteCartBadge();
-    
-    // Show result
     displayAIQuoteResult(quoteName, eventType, attendance);
-    
-    // Show notification
     showNotification('✨ AI-powered quote generated!', 'success');
 }
 
 function getAIRecommendedEquipment(eventType, attendance, locationType, requirements) {
-    // Simple AI logic based on event parameters
     const recommended = [];
     const attendanceNum = parseInt(attendance) || 0;
     const requiresSilent = requirements?.toLowerCase().includes('silent') || 
@@ -1630,44 +1236,36 @@ function getAIRecommendedEquipment(eventType, attendance, locationType, requirem
                           eventType === 'Wedding';
     const prioritizeHybrid = document.getElementById('newQuoteHybrid')?.checked;
     
-    // Determine power needs based on attendance
     if (attendanceNum < 500) {
-        // Small event - 150-300kW
         if (requiresSilent || prioritizeHybrid) {
             recommended.push({ id: 'gen-150-hybrid-1', quantity: 1 });
         } else {
             recommended.push({ id: 'gen-250-diesel-1', quantity: 1 });
         }
-        // Add battery for silent operation
         if (requiresSilent) {
             recommended.push({ id: 'bat-storage-1', quantity: 1 });
         }
     } else if (attendanceNum < 2000) {
-        // Medium event - 300-500kW
         if (prioritizeHybrid) {
             recommended.push({ id: 'gen-300-hybrid-1', quantity: 1 });
             recommended.push({ id: 'gen-150-hybrid-1', quantity: 1 });
         } else {
             recommended.push({ id: 'gen-500-hybrid-1', quantity: 1 });
         }
-        recommended.push({ id: 'bat-storage-1', quantity: 1 }); // Backup
+        recommended.push({ id: 'bat-storage-1', quantity: 1 });
     } else if (attendanceNum < 5000) {
-        // Large event - 500-750kW
         recommended.push({ id: 'gen-500-hybrid-1', quantity: 1 });
         recommended.push({ id: 'gen-300-hybrid-1', quantity: 1 });
         recommended.push({ id: 'bat-storage-2', quantity: 1 });
     } else {
-        // Very large event - 1000kW+
         recommended.push({ id: 'gen-1000-hybrid-1', quantity: 1 });
         recommended.push({ id: 'gen-500-hybrid-1', quantity: 1 });
         recommended.push({ id: 'bat-storage-2', quantity: 2 });
     }
     
-    // Add accessories
     recommended.push({ id: 'dist-panel-1', quantity: Math.ceil(recommended.length / 2) });
     recommended.push({ id: 'cable-pack-1', quantity: recommended.length });
     
-    // Add solar if sustainability is priority
     if (prioritizeHybrid && locationType === 'outdoor') {
         recommended.push({ id: 'solar-panel-1', quantity: 2 });
     }
@@ -1746,55 +1344,312 @@ function displayAIQuoteResult(quoteName, eventType, attendance) {
                 <button class="btn btn-outline" style="padding: 16px;" onclick="showPage('equipment')">
                     ✏️ Customize Equipment
                 </button>
-                <button class="btn btn-outline" style="padding: 16px;" onclick="document.getElementById('aiQuoteResult').style.display='none'; quoteCart=[];">
+                <button class="btn btn-outline" style="padding: 16px;" onclick="document.getElementById('aiQuoteResult').style.display='none'; quoteCart=[]; updateQuoteCartBadge();">
                     🔄 Start Over
                 </button>
             </div>
         </div>
     `;
     
-    // Scroll to result
     resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-// Update addToQuote to show notification about Active Quote tab
-function addToQuoteEnhanced(equipmentId) {
-    addToQuote(equipmentId); // Call original function
+// ==========================
+// CHARTS
+// ==========================
+
+function drawSpendingChart(period = '12') {
+    const canvas = document.getElementById('spendingChart');
+    if (!canvas) return;
     
-    // Add extra notification
-    setTimeout(() => {
-        const notification = document.createElement('div');
-        notification.style.cssText = `
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            padding: 16px 24px;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            z-index: 10000;
-            cursor: pointer;
-            animation: slideIn 0.3s ease-out;
-            font-weight: 500;
-        `;
-        notification.innerHTML = `
-            <div>Item added to quote!</div>
-            <div style="font-size: 0.85em; opacity: 0.9; margin-top: 5px;">
-                Click here or go to Quotes → Active Quote to review
+    const ctx = canvas.getContext('2d');
+    const data = spendingData[period];
+    
+    canvas.width = canvas.offsetWidth * 2;
+    canvas.height = 700;
+    ctx.scale(2, 2);
+    
+    const width = canvas.offsetWidth;
+    const height = 350;
+    const padding = 50;
+    const chartWidth = width - padding * 2;
+    const chartHeight = height - padding * 2;
+    
+    ctx.clearRect(0, 0, width, height);
+    
+    const maxSpending = Math.max(...data.spending);
+    const maxEvents = Math.max(...data.events);
+    
+    // Grid and Y-axis
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 5; i++) {
+        const y = padding + (chartHeight / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+        
+        const value = Math.round(maxSpending * (1 - i / 5) / 1000);
+        ctx.fillStyle = '#64748b';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('$' + value + 'K', padding - 10, y + 4);
+    }
+    
+    // Spending line
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    data.spending.forEach((value, i) => {
+        const x = padding + (chartWidth / (data.labels.length - 1)) * i;
+        const y = padding + chartHeight - (value / maxSpending) * chartHeight;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    
+    // Spending points
+    data.spending.forEach((value, i) => {
+        const x = padding + (chartWidth / (data.labels.length - 1)) * i;
+        const y = padding + chartHeight - (value / maxSpending) * chartHeight;
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#3b82f6';
+        ctx.fill();
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    });
+    
+    // Savings line
+    ctx.strokeStyle = '#10b981';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    data.savings.forEach((value, i) => {
+        const x = padding + (chartWidth / (data.labels.length - 1)) * i;
+        const y = padding + chartHeight - (value / maxSpending) * chartHeight;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    
+    // Savings points
+    data.savings.forEach((value, i) => {
+        const x = padding + (chartWidth / (data.labels.length - 1)) * i;
+        const y = padding + chartHeight - (value / maxSpending) * chartHeight;
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#10b981';
+        ctx.fill();
+    });
+    
+    // Events bars
+    const barWidth = (chartWidth / data.labels.length) * 0.3;
+    data.events.forEach((value, i) => {
+        const x = padding + (chartWidth / (data.labels.length - 1)) * i - barWidth / 2;
+        const barHeight = (value / maxEvents) * (chartHeight * 0.3);
+        const y = height - padding - barHeight;
+        ctx.fillStyle = '#8b5cf6';
+        ctx.fillRect(x, y, barWidth, barHeight);
+    });
+    
+    // X-axis labels
+    ctx.fillStyle = '#64748b';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    data.labels.forEach((label, i) => {
+        const x = padding + (chartWidth / (data.labels.length - 1)) * i;
+        ctx.fillText(label, x, height - padding + 20);
+    });
+}
+
+function drawCarbonChart(period = '12') {
+    const canvas = document.getElementById('carbonChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const data = carbonData[period];
+    
+    canvas.width = canvas.offsetWidth * 2;
+    canvas.height = 700;
+    ctx.scale(2, 2);
+    
+    const width = canvas.offsetWidth;
+    const height = 350;
+    const padding = 50;
+    const chartWidth = width - padding * 2;
+    const chartHeight = height - padding * 2;
+    
+    ctx.clearRect(0, 0, width, height);
+    
+    const maxValue = Math.max(...data.baseline);
+    
+    // Grid and Y-axis
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 5; i++) {
+        const y = padding + (chartHeight / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+        
+        const value = (maxValue * (1 - i / 5)).toFixed(1);
+        ctx.fillStyle = '#64748b';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(value + 't', padding - 10, y + 4);
+    }
+    
+    // Bars
+    const barWidth = (chartWidth / data.labels.length) * 0.35;
+    const barSpacing = (chartWidth / data.labels.length);
+    
+    data.labels.forEach((label, i) => {
+        const x = padding + barSpacing * i + (barSpacing - barWidth * 2) / 2;
+        
+        // Baseline bar
+        const baselineHeight = (data.baseline[i] / maxValue) * chartHeight;
+        const baselineY = height - padding - baselineHeight;
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+        ctx.fillRect(x, baselineY, barWidth, baselineHeight);
+        
+        // Avoided bar
+        const avoidedHeight = (data.avoided[i] / maxValue) * chartHeight;
+        const avoidedY = height - padding - avoidedHeight;
+        ctx.fillStyle = '#10b981';
+        ctx.fillRect(x + barWidth, avoidedY, barWidth, avoidedHeight);
+        
+        // Labels
+        ctx.fillStyle = '#047857';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(data.avoided[i].toFixed(1) + 't', x + barWidth * 1.5, avoidedY - 5);
+    });
+    
+    // X-axis labels
+    ctx.fillStyle = '#64748b';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    data.labels.forEach((label, i) => {
+        const x = padding + barSpacing * i + barSpacing / 2;
+        ctx.fillText(label, x, height - padding + 20);
+    });
+}
+
+function updateSpendingChart(period) {
+    drawSpendingChart(period);
+}
+
+function updateCarbonChart(period) {
+    drawCarbonChart(period);
+}
+
+// ==========================
+// CHAT FUNCTIONS
+// ==========================
+
+function toggleChat() {
+    const chatWindow = document.getElementById('chatWindow');
+    chatWindow?.classList.toggle('open');
+}
+
+function sendChatMessage() {
+    const input = document.getElementById('chatInputField');
+    const message = input?.value.trim();
+    
+    if (!message) return;
+    
+    const messagesDiv = document.getElementById('chatMessages');
+    if (messagesDiv) {
+        messagesDiv.innerHTML += `
+            <div class="chat-message user-message" style="flex-direction: row-reverse;">
+                <div class="chat-avatar user-avatar">👤</div>
+                <div class="chat-bubble">${escapeHtml(message)}</div>
             </div>
         `;
-        notification.onclick = () => {
-            showPage('quotes');
-            switchQuoteTab('active');
-            notification.remove();
-        };
         
-        document.body.appendChild(notification);
+        input.value = '';
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
         
         setTimeout(() => {
-            notification.style.animation = 'slideOut 0.3s ease-out';
-            setTimeout(() => notification.remove(), 300);
-        }, 5000);
-    }, 500);
+            messagesDiv.innerHTML += `
+                <div class="chat-message">
+                    <div class="chat-avatar ai-avatar">🤖</div>
+                    <div class="chat-bubble">
+                        I'd be happy to help! Let me look that up for you right away. One moment...
+                    </div>
+                </div>
+            `;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }, 1000);
+    }
+}
+
+// ==========================
+// UTILITIES
+// ==========================
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 90px;
+        right: 30px;
+        background: ${type === 'success' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'};
+        color: white;
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+        font-weight: 500;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ==========================
+// DEBUG EXPORTS
+// ==========================
+
+if (typeof window !== 'undefined') {
+    window.cesPortal = {
+        // Chart functions
+        drawSpendingChart,
+        drawCarbonChart,
+        
+        // Navigation
+        showPage,
+        
+        // Equipment
+        filterEquipment,
+        addToQuote,
+        equipmentInventory,
+        
+        // Quotes
+        quoteCart,
+        savedQuotes,
+        quoteTemplates,
+        
+        // Chat
+        toggleChat
+    };
 }
