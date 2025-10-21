@@ -1,31 +1,29 @@
 /* =====================================================
-   PAGE ROUTER - Template Loading System
-   Load page templates dynamically while keeping old system as fallback
+   PAGE ROUTER - Template Loading System (OPTIMIZED)
+   All pages migrated - production ready
    ===================================================== */
 
 const PageRouter = {
     currentPage: null,
     templateCache: {},
-    useTemplates: true, // Set to false to use old system
+    useTemplates: true,
     
     /**
      * Load a page template dynamically
-     * Falls back to old showPage() if template not found
      */
     async loadPage(pageName) {
-        // If templates disabled, use old system
         if (!this.useTemplates) {
-            this.fallbackToOldSystem(pageName);
+            console.warn('Templates disabled - check configuration');
             return;
         }
         
         try {
-            console.log(`Loading template: ${pageName}`);
+            console.log(`Loading page: ${pageName}`);
             
             // Show loading state
             this.showLoading();
             
-            // Check cache first
+            // Check cache first (performance optimization)
             if (this.templateCache[pageName]) {
                 console.log(`Using cached template: ${pageName}`);
                 this.renderPage(pageName, this.templateCache[pageName]);
@@ -41,20 +39,17 @@ const PageRouter = {
             
             const html = await response.text();
             
-            // Cache it
+            // Cache it for future use
             this.templateCache[pageName] = html;
             
             // Render it
             this.renderPage(pageName, html);
             
-            console.log(`Template loaded successfully: ${pageName}`);
+            console.log(`✅ Page loaded: ${pageName}`);
             
         } catch (error) {
             console.error('Error loading page template:', error);
-            console.log('Falling back to old system...');
-            
-            // Fallback to old system
-            this.fallbackToOldSystem(pageName);
+            this.showError(pageName);
         }
     },
     
@@ -62,21 +57,12 @@ const PageRouter = {
      * Render page HTML into container
      */
     renderPage(pageName, html) {
-        // Get container (try new first, then old)
-        const container = document.getElementById('dynamicContent') || 
-                         document.getElementById('mainContent');
+        const container = document.getElementById('dynamicContent');
         
         if (!container) {
-            console.error('No content container found');
-            this.fallbackToOldSystem(pageName);
+            console.error('Dynamic content container not found');
             return;
         }
-        
-        // Hide old pages if they exist
-        document.querySelectorAll('.page').forEach(page => {
-            page.classList.remove('active');
-            page.style.display = 'none';
-        });
         
         // Render new content
         container.innerHTML = html;
@@ -98,51 +84,151 @@ const PageRouter = {
         this.updateURL(pageName);
         
         // Scroll to top
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     
     /**
      * Initialize page-specific functionality
+     * Best practice: All page initialization in one place
      */
     initializePage(pageName) {
-        // Call page-specific init if exists
-        if (window.PageHandlers && window.PageHandlers[pageName]?.init) {
+        // Call custom page handlers if defined
+        if (window.PageHandlers?.[pageName]?.init) {
             console.log(`Initializing page handler: ${pageName}`);
-            window.PageHandlers[pageName].init();
+            try {
+                window.PageHandlers[pageName].init();
+            } catch (error) {
+                console.error(`Error in page handler for ${pageName}:`, error);
+            }
         }
         
-        // Common initializations
+        // Common page initializations
         switch(pageName) {
             case 'dashboard':
-                if (typeof drawSpendingChart === 'function') {
-                    setTimeout(() => drawSpendingChart('12'), 100);
-                }
+                // Initialize dashboard charts
+                this.initDashboardCharts();
                 break;
                 
             case 'analytics':
-                if (typeof drawSpendingChart === 'function') {
-                    setTimeout(() => drawSpendingChart('12'), 100);
-                }
+                // Initialize analytics charts
+                this.initAnalyticsCharts();
                 break;
                 
             case 'sustainability':
-                if (typeof drawCarbonChart === 'function') {
-                    setTimeout(() => drawCarbonChart('12'), 100);
-                }
+                // Initialize sustainability charts
+                this.initSustainabilityCharts();
                 break;
                 
             case 'equipment':
-                if (typeof updateEquipmentDisplay === 'function') {
-                    updateEquipmentDisplay();
-                }
+                // Initialize equipment catalog
+                this.initEquipmentCatalog();
                 break;
                 
             case 'quotes':
-                if (typeof renderQuotesPage === 'function') {
-                    renderQuotesPage();
-                }
+                // Initialize quotes page
+                this.initQuotesPage();
+                break;
+                
+            case 'my-events':
+                // Initialize events table/filters
+                this.initMyEventsPage();
+                break;
+                
+            case 'live-monitoring':
+                // Initialize live monitoring (could add real-time updates)
+                this.initLiveMonitoring();
                 break;
         }
+    },
+    
+    /**
+     * Dashboard initialization
+     */
+    initDashboardCharts() {
+        if (typeof drawSpendingChart === 'function') {
+            setTimeout(() => {
+                try {
+                    drawSpendingChart('12');
+                } catch (error) {
+                    console.error('Error drawing spending chart:', error);
+                }
+            }, 100);
+        }
+    },
+    
+    /**
+     * Analytics initialization
+     */
+    initAnalyticsCharts() {
+        if (typeof drawSpendingChart === 'function') {
+            setTimeout(() => {
+                try {
+                    drawSpendingChart('12');
+                } catch (error) {
+                    console.error('Error drawing analytics chart:', error);
+                }
+            }, 100);
+        }
+    },
+    
+    /**
+     * Sustainability initialization
+     */
+    initSustainabilityCharts() {
+        if (typeof drawCarbonChart === 'function') {
+            setTimeout(() => {
+                try {
+                    drawCarbonChart('12');
+                } catch (error) {
+                    console.error('Error drawing carbon chart:', error);
+                }
+            }, 100);
+        }
+    },
+    
+    /**
+     * Equipment catalog initialization
+     */
+    initEquipmentCatalog() {
+        if (typeof updateEquipmentDisplay === 'function') {
+            try {
+                updateEquipmentDisplay();
+            } catch (error) {
+                console.error('Error updating equipment display:', error);
+            }
+        }
+    },
+    
+    /**
+     * Quotes page initialization
+     */
+    initQuotesPage() {
+        if (typeof renderQuotesPage === 'function') {
+            try {
+                renderQuotesPage();
+            } catch (error) {
+                console.error('Error rendering quotes page:', error);
+            }
+        }
+    },
+    
+    /**
+     * My Events page initialization
+     */
+    initMyEventsPage() {
+        // Add any events-specific initialization here
+        console.log('My Events page loaded');
+    },
+    
+    /**
+     * Live Monitoring initialization
+     */
+    initLiveMonitoring() {
+        // Add real-time monitoring initialization here
+        console.log('Live Monitoring page loaded');
+        
+        // Future: Could add WebSocket connection for real-time updates
+        // Future: Could add auto-refresh for live data
     },
     
     /**
@@ -164,7 +250,7 @@ const PageRouter = {
      * Update browser URL
      */
     updateURL(pageName) {
-        if (window.history && window.history.pushState) {
+        if (window.history?.pushState) {
             window.history.pushState(
                 { page: pageName }, 
                 '', 
@@ -177,9 +263,7 @@ const PageRouter = {
      * Show loading indicator
      */
     showLoading() {
-        const container = document.getElementById('dynamicContent') || 
-                         document.getElementById('mainContent');
-        
+        const container = document.getElementById('dynamicContent');
         if (container) {
             container.style.opacity = '0.5';
             container.style.pointerEvents = 'none';
@@ -190,9 +274,7 @@ const PageRouter = {
      * Hide loading indicator
      */
     hideLoading() {
-        const container = document.getElementById('dynamicContent') || 
-                         document.getElementById('mainContent');
-        
+        const container = document.getElementById('dynamicContent');
         if (container) {
             container.style.opacity = '1';
             container.style.pointerEvents = 'auto';
@@ -200,29 +282,29 @@ const PageRouter = {
     },
     
     /**
-     * Fallback to original showPage system
+     * Show error message
      */
-    fallbackToOldSystem(pageName) {
-        console.log(`Using old system for: ${pageName}`);
-        
-        // Show old pages, hide dynamic content
-        const dynamicContent = document.getElementById('dynamicContent');
-        if (dynamicContent) {
-            dynamicContent.style.display = 'none';
-        }
-        
-        document.querySelectorAll('.page').forEach(page => {
-            page.style.display = 'block';
-        });
-        
-        // Call existing showPage function
-        if (typeof showPage === 'function') {
-            showPage(pageName);
+    showError(pageName) {
+        const container = document.getElementById('dynamicContent');
+        if (container) {
+            container.innerHTML = `
+                <div style="padding: 40px; text-align: center;">
+                    <div style="font-size: 3em; margin-bottom: 20px;">⚠️</div>
+                    <h2 style="color: #ef4444; margin-bottom: 10px;">Page Not Found</h2>
+                    <p style="color: #64748b; margin-bottom: 20px;">
+                        Could not load the ${pageName} page.
+                    </p>
+                    <button class="btn btn-primary" onclick="navigateTo('dashboard')">
+                        Return to Dashboard
+                    </button>
+                </div>
+            `;
+            container.style.display = 'block';
         }
     },
     
     /**
-     * Preload a template
+     * Preload a template for better performance
      */
     async preload(pageName) {
         if (this.templateCache[pageName]) {
@@ -234,23 +316,50 @@ const PageRouter = {
             if (response.ok) {
                 const html = await response.text();
                 this.templateCache[pageName] = html;
-                console.log(`Preloaded template: ${pageName}`);
+                console.log(`✅ Preloaded: ${pageName}`);
             }
         } catch (error) {
-            console.log(`Could not preload template: ${pageName}`);
+            // Silently fail for preloading
+            console.log(`⚠️ Could not preload: ${pageName}`);
         }
     },
     
     /**
-     * Clear template cache
+     * Preload all templates for instant navigation
+     */
+    async preloadAll() {
+        const pages = [
+            'dashboard',
+            'ai-recommendations',
+            'quotes',
+            'my-events',
+            'live-monitoring',
+            'equipment',
+            'analytics',
+            'sustainability',
+            'billing',
+            'team'
+        ];
+        
+        console.log('🚀 Preloading all templates...');
+        
+        for (const page of pages) {
+            await this.preload(page);
+        }
+        
+        console.log('✅ All templates preloaded!');
+    },
+    
+    /**
+     * Clear template cache (useful for development)
      */
     clearCache() {
         this.templateCache = {};
-        console.log('Template cache cleared');
+        console.log('🗑️ Template cache cleared');
     }
 };
 
-// Handle browser back/forward
+// Handle browser back/forward buttons
 window.addEventListener('popstate', (event) => {
     if (event.state?.page) {
         PageRouter.loadPage(event.state.page);
@@ -259,28 +368,38 @@ window.addEventListener('popstate', (event) => {
 
 // Initialize on page load
 window.addEventListener('DOMContentLoaded', () => {
-    // Check for hash in URL
+    console.log('🚀 Page Router initializing...');
+    
+    // Check for hash in URL and load that page
     const hash = window.location.hash.slice(1);
     if (hash && PageRouter.useTemplates) {
         PageRouter.loadPage(hash);
+    } else {
+        // Default to dashboard
+        PageRouter.loadPage('dashboard');
     }
     
-    // Preload common templates
+    // Preload common templates for instant navigation (best practice)
     setTimeout(() => {
-        PageRouter.preload('dashboard');
         PageRouter.preload('equipment');
         PageRouter.preload('quotes');
+        PageRouter.preload('my-events');
     }, 1000);
+    
+    // Optional: Preload all templates after 3 seconds for super-fast navigation
+    // Uncomment if you want instant page loads (uses more memory)
+    // setTimeout(() => PageRouter.preloadAll(), 3000);
 });
 
 // Export to global scope
 window.PageRouter = PageRouter;
 
-// Helper function for navigation
+// Global navigation helper
 window.navigateTo = function(pageName) {
     PageRouter.loadPage(pageName);
 };
 
-console.log('✅ Page Router initialized');
-console.log('Use: navigateTo("pageName") or PageRouter.loadPage("pageName")');
-console.log('Toggle templates with: PageRouter.useTemplates = false');
+console.log('✅ Page Router initialized - Production ready');
+console.log('📄 All templates: dashboard, equipment, quotes, my-events, live-monitoring, ai-recommendations, analytics, sustainability, billing, team');
+console.log('💡 Use: navigateTo("pageName")');
+console.log('🔧 Dev tools: PageRouter.clearCache(), PageRouter.preloadAll()');
