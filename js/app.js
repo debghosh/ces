@@ -323,6 +323,43 @@ function addToQuote(equipmentId) {
     // Show confirmation
     showNotification(`✅ ${equipment.name} added to quote!`, 'success');
     updateQuoteCartBadge();
+    
+    // Show additional notification with action
+    setTimeout(() => {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            z-index: 10000;
+            cursor: pointer;
+            animation: slideIn 0.3s ease-out;
+            font-weight: 500;
+        `;
+        notification.innerHTML = `
+            <div style="font-size: 1.05em; margin-bottom: 5px;">📋 View your quote</div>
+            <div style="font-size: 0.85em; opacity: 0.9;">
+                Click here to review and save
+            </div>
+        `;
+        notification.onclick = () => {
+            showPage('quotes');
+            setTimeout(() => switchQuoteTab('active'), 100);
+            notification.remove();
+        };
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+    }, 500);
 }
 
 function showNotification(message, type = 'info') {
@@ -746,4 +783,1007 @@ if (typeof window !== 'undefined') {
         equipmentInventory,
         quoteCart
     };
+}
+
+// ==========================
+// QUOTES SYSTEM
+// ==========================
+
+// Saved quotes and templates (persisted to localStorage)
+let savedQuotes = [];
+let quoteTemplates = [];
+
+// Current active quote
+let activeQuote = {
+    id: null,
+    name: '',
+    items: [],
+    eventDetails: {},
+    createdAt: null,
+    updatedAt: null
+};
+
+// Initialize quotes from localStorage
+function initializeQuotesSystem() {
+    const savedQuotesData = localStorage.getItem('cespower_savedQuotes');
+    const templatesData = localStorage.getItem('cespower_quoteTemplates');
+    
+    if (savedQuotesData) {
+        savedQuotes = JSON.parse(savedQuotesData);
+    }
+    
+    if (templatesData) {
+        quoteTemplates = JSON.parse(templatesData);
+    }
+    
+    // Migrate quoteCart to activeQuote if exists
+    if (quoteCart.length > 0) {
+        activeQuote.items = quoteCart;
+    }
+}
+
+// Save quotes to localStorage
+function persistQuotes() {
+    localStorage.setItem('cespower_savedQuotes', JSON.stringify(savedQuotes));
+    localStorage.setItem('cespower_quoteTemplates', JSON.stringify(quoteTemplates));
+}
+
+// ==========================
+// QUOTE CART PANEL (Bell Icon Dropdown)
+// ==========================
+
+function toggleQuoteCart() {
+    let panel = document.getElementById('quoteCartPanel');
+    
+    if (!panel) {
+        createQuoteCartPanel();
+        panel = document.getElementById('quoteCartPanel');
+    }
+    
+    panel.classList.toggle('open');
+    
+    if (panel.classList.contains('open')) {
+        renderQuoteCartPanel();
+    }
+}
+
+function createQuoteCartPanel() {
+    const panel = document.createElement('div');
+    panel.id = 'quoteCartPanel';
+    panel.className = 'quote-cart-panel';
+    panel.innerHTML = `
+        <div class="quote-cart-header">
+            <h3>Quote Cart</h3>
+            <button class="quote-cart-close" onclick="toggleQuoteCart()">✕</button>
+        </div>
+        <div class="quote-cart-content" id="quoteCartContent">
+            <!-- Content rendered by renderQuoteCartPanel() -->
+        </div>
+    `;
+    
+    document.body.appendChild(panel);
+    
+    // Add styles
+    const style = document.createElement('style');
+    style.textContent = `
+        .quote-cart-panel {
+            position: fixed;
+            top: 70px;
+            right: -400px;
+            width: 400px;
+            height: calc(100vh - 70px);
+            background: white;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            z-index: 999;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .quote-cart-panel.open {
+            right: 0;
+        }
+        
+        .quote-cart-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+        
+        .quote-cart-header h3 {
+            font-size: 1.2em;
+            color: #0f172a;
+        }
+        
+        .quote-cart-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #64748b;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        
+        .quote-cart-close:hover {
+            background: #e2e8f0;
+        }
+        
+        .quote-cart-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .cart-item {
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: #f8fafc;
+        }
+        
+        .cart-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .cart-item-name {
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 0.95em;
+        }
+        
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.1em;
+            padding: 0;
+        }
+        
+        .cart-item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .qty-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+        }
+        
+        .qty-btn:hover {
+            background: #f1f5f9;
+        }
+        
+        .cart-item-price {
+            font-weight: 600;
+            color: #3b82f6;
+        }
+        
+        .cart-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+        
+        .cart-empty-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+        
+        .cart-summary {
+            border-top: 2px solid #e2e8f0;
+            padding: 15px 0;
+            margin-top: 15px;
+        }
+        
+        .cart-summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #64748b;
+        }
+        
+        .cart-summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .cart-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function renderQuoteCartPanel() {
+    const content = document.getElementById('quoteCartContent');
+    if (!content) return;
+    
+    if (quoteCart.length === 0) {
+        content.innerHTML = `
+            <div class="cart-empty">
+                <div class="cart-empty-icon">🛒</div>
+                <h4 style="margin-bottom: 8px;">Your cart is empty</h4>
+                <p>Add equipment to get started</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const subtotal = quoteCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const tax = subtotal * 0.08; // 8% tax
+    const total = subtotal + tax;
+    
+    content.innerHTML = `
+        ${quoteCart.map((item, index) => `
+            <div class="cart-item">
+                <div class="cart-item-header">
+                    <div class="cart-item-name">${item.emoji} ${item.name}</div>
+                    <button class="cart-item-remove" onclick="removeFromCart(${index})" title="Remove">🗑️</button>
+                </div>
+                <div style="color: #64748b; font-size: 0.85em; margin-bottom: 8px;">${item.specs}</div>
+                <div class="cart-item-details">
+                    <div class="cart-item-qty">
+                        <button class="qty-btn" onclick="updateCartQuantity(${index}, -1)">−</button>
+                        <span style="font-weight: 600; min-width: 20px; text-align: center;">${item.quantity}</span>
+                        <button class="qty-btn" onclick="updateCartQuantity(${index}, 1)">+</button>
+                    </div>
+                    <div class="cart-item-price">$${(item.price * item.quantity).toLocaleString()}</div>
+                </div>
+            </div>
+        `).join('')}
+        
+        <div class="cart-summary">
+            <div class="cart-summary-row">
+                <span>Subtotal</span>
+                <span>$${subtotal.toLocaleString()}</span>
+            </div>
+            <div class="cart-summary-row">
+                <span>Tax (8%)</span>
+                <span>$${tax.toFixed(2)}</span>
+            </div>
+            <div class="cart-summary-total">
+                <span>Total</span>
+                <span>$${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+            </div>
+        </div>
+        
+        <div class="cart-actions">
+            <button class="btn btn-primary" onclick="viewFullQuote()" style="width: 100%;">
+                📋 View Full Quote
+            </button>
+            <button class="btn btn-outline" onclick="clearCart()" style="width: 100%;">
+                🗑️ Clear Cart
+            </button>
+        </div>
+    `;
+}
+
+function removeFromCart(index) {
+    const item = quoteCart[index];
+    quoteCart.splice(index, 1);
+    updateQuoteCartBadge();
+    renderQuoteCartPanel();
+    showNotification(`${item.name} removed from cart`, 'info');
+}
+
+function updateCartQuantity(index, change) {
+    quoteCart[index].quantity += change;
+    
+    if (quoteCart[index].quantity <= 0) {
+        removeFromCart(index);
+    } else {
+        renderQuoteCartPanel();
+        updateQuoteCartBadge();
+    }
+}
+
+function clearCart() {
+    if (confirm('Clear all items from cart?')) {
+        quoteCart = [];
+        updateQuoteCartBadge();
+        renderQuoteCartPanel();
+        showNotification('Cart cleared', 'info');
+    }
+}
+
+function viewFullQuote() {
+    toggleQuoteCart(); // Close panel
+    showPage('quotes'); // Navigate to quotes page
+}
+
+// Update the bell icon click handler
+function setupQuoteCartToggle() {
+    const bellIcon = document.querySelector('.notifications');
+    if (bellIcon) {
+        bellIcon.style.cursor = 'pointer';
+        bellIcon.onclick = toggleQuoteCart;
+    }
+}
+
+// ==========================
+// QUOTES PAGE MANAGEMENT
+// ==========================
+
+let quotesPageFilters = {
+    searchTerm: '',
+    sortBy: 'date', // date, name, total
+    showTemplates: false
+};
+
+function renderQuotesPage() {
+    // This will be called when navigating to quotes page
+    renderActiveQuoteSection();
+    renderPastQuotesSection();
+    renderQuoteTemplatesSection();
+}
+
+function renderActiveQuoteSection() {
+    const container = document.getElementById('activeQuoteSection');
+    if (!container) return;
+    
+    if (quoteCart.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px; background: #f8fafc; border-radius: 12px;">
+                <div style="font-size: 3em; margin-bottom: 15px;">🛒</div>
+                <h3 style="margin-bottom: 10px; color: #64748b;">No active quote</h3>
+                <p style="color: #94a3b8; margin-bottom: 20px;">Start by adding equipment from the catalog</p>
+                <button class="btn btn-primary" onclick="showPage('equipment')">Browse Equipment</button>
+            </div>
+        `;
+        return;
+    }
+    
+    const subtotal = quoteCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    container.innerHTML = `
+        <div style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h3 style="margin-bottom: 20px;">📋 Current Quote</h3>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Quote Name</label>
+                <input type="text" id="quoteNameInput" class="filter-select" style="width: 100%;" placeholder="e.g., Summer Music Festival 2025" value="${activeQuote.name || ''}">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h4 style="margin-bottom: 15px; color: #475569;">Equipment (${quoteCart.length} items)</h4>
+                ${quoteCart.map((item, index) => `
+                    <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 8px; margin-bottom: 8px;">
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">${item.emoji} ${item.name}</div>
+                            <div style="font-size: 0.85em; color: #64748b;">Qty: ${item.quantity} × $${item.price}/day</div>
+                        </div>
+                        <div style="font-weight: 600; color: #3b82f6;">$${(item.price * item.quantity).toLocaleString()}</div>
+                        <button onclick="removeFromCart(${index})" style="background: none; border: none; color: #ef4444; cursor: pointer; margin-left: 15px;">🗑️</button>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #64748b;">
+                    <span>Subtotal</span>
+                    <span>$${subtotal.toLocaleString()}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #64748b;">
+                    <span>Tax (8%)</span>
+                    <span>$${(subtotal * 0.08).toFixed(2)}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 1.3em; font-weight: 700; color: #0f172a; padding-top: 10px; border-top: 2px solid #e2e8f0;">
+                    <span>Total</span>
+                    <span>$${(subtotal * 1.08).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" onclick="saveCurrentQuote()" style="flex: 1;">💾 Save Quote</button>
+                <button class="btn btn-outline" onclick="saveQuoteAsTemplate()" style="flex: 1;">📑 Save as Template</button>
+                <button class="btn btn-outline" onclick="clearCart()">🗑️ Clear</button>
+            </div>
+        </div>
+    `;
+}
+
+function renderPastQuotesSection() {
+    const container = document.getElementById('pastQuotesSection');
+    if (!container) return;
+    
+    // Filter quotes based on search
+    let filtered = savedQuotes.filter(quote => {
+        if (!quotesPageFilters.searchTerm) return true;
+        const search = quotesPageFilters.searchTerm.toLowerCase();
+        return quote.name.toLowerCase().includes(search) ||
+               quote.items.some(item => item.name.toLowerCase().includes(search));
+    });
+    
+    // Sort quotes
+    filtered.sort((a, b) => {
+        if (quotesPageFilters.sortBy === 'date') {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        } else if (quotesPageFilters.sortBy === 'name') {
+            return a.name.localeCompare(b.name);
+        }
+        return 0;
+    });
+    
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px; background: #f8fafc; border-radius: 12px;">
+                <div style="font-size: 3em; margin-bottom: 15px; opacity: 0.3;">📋</div>
+                <h4 style="margin-bottom: 8px; color: #64748b;">No saved quotes</h4>
+                <p style="color: #94a3b8;">Your saved quotes will appear here</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = filtered.map(quote => {
+        const total = quote.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) * 1.08;
+        const itemCount = quote.items.reduce((sum, item) => sum + item.quantity, 0);
+        
+        return `
+            <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 15px; cursor: pointer; transition: all 0.3s;" 
+                 onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" 
+                 onmouseout="this.style.boxShadow='none'">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                    <div>
+                        <h4 style="margin-bottom: 5px;">${quote.name || 'Untitled Quote'}</h4>
+                        <div style="font-size: 0.85em; color: #64748b;">
+                            ${new Date(quote.createdAt).toLocaleDateString()} • ${itemCount} items
+                        </div>
+                    </div>
+                    <div style="font-size: 1.2em; font-weight: 700; color: #3b82f6;">
+                        $${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;">
+                    ${quote.items.slice(0, 3).map(item => 
+                        `<span class="badge badge-info">${item.emoji} ${item.name}</span>`
+                    ).join('')}
+                    ${quote.items.length > 3 ? `<span class="badge" style="background: #f1f5f9; color: #64748b;">+${quote.items.length - 3} more</span>` : ''}
+                </div>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-primary" onclick="loadQuote('${quote.id}')" style="padding: 8px 16px; font-size: 0.9em;">📋 Load</button>
+                    <button class="btn btn-outline" onclick="duplicateQuote('${quote.id}')" style="padding: 8px 16px; font-size: 0.9em;">📑 Duplicate</button>
+                    <button class="btn btn-outline" onclick="convertQuoteToTemplate('${quote.id}')" style="padding: 8px 16px; font-size: 0.9em;">📌 To Template</button>
+                    <button class="btn btn-outline" onclick="deleteQuote('${quote.id}')" style="padding: 8px 16px; font-size: 0.9em; color: #ef4444; border-color: #fecaca;">🗑️</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderQuoteTemplatesSection() {
+    const container = document.getElementById('quoteTemplatesSection');
+    if (!container) return;
+    
+    if (quoteTemplates.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px; background: #f8fafc; border-radius: 12px;">
+                <div style="font-size: 3em; margin-bottom: 15px; opacity: 0.3;">📑</div>
+                <h4 style="margin-bottom: 8px; color: #64748b;">No templates</h4>
+                <p style="color: #94a3b8;">Save frequently used quotes as templates</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = quoteTemplates.map(template => {
+        const itemCount = template.items.reduce((sum, item) => sum + item.quantity, 0);
+        
+        return `
+            <div style="background: linear-gradient(135deg, rgba(59,130,246,0.05), rgba(139,92,246,0.05)); padding: 20px; border-radius: 12px; border: 2px solid #dbeafe; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                    <div>
+                        <h4 style="margin-bottom: 5px;">📑 ${template.name}</h4>
+                        <div style="font-size: 0.85em; color: #64748b;">${itemCount} items</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;">
+                    ${template.items.slice(0, 4).map(item => 
+                        `<span class="badge badge-info">${item.emoji} ${item.name} (${item.quantity})</span>`
+                    ).join('')}
+                </div>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-primary" onclick="useTemplate('${template.id}')" style="padding: 8px 16px; font-size: 0.9em;">✨ Use Template</button>
+                    <button class="btn btn-outline" onclick="editTemplate('${template.id}')" style="padding: 8px 16px; font-size: 0.9em;">✏️ Edit</button>
+                    <button class="btn btn-outline" onclick="deleteTemplate('${template.id}')" style="padding: 8px 16px; font-size: 0.9em; color: #ef4444; border-color: #fecaca;">🗑️</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ==========================
+// QUOTE ACTIONS
+// ==========================
+
+function saveCurrentQuote() {
+    const nameInput = document.getElementById('quoteNameInput');
+    const name = nameInput ? nameInput.value.trim() : '';
+    
+    if (!name) {
+        alert('Please enter a quote name');
+        return;
+    }
+    
+    if (quoteCart.length === 0) {
+        alert('Cart is empty');
+        return;
+    }
+    
+    const quote = {
+        id: 'quote_' + Date.now(),
+        name: name,
+        items: JSON.parse(JSON.stringify(quoteCart)), // Deep copy
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+    };
+    
+    savedQuotes.unshift(quote);
+    persistQuotes();
+    
+    showNotification(`✅ Quote "${name}" saved!`, 'success');
+    renderPastQuotesSection();
+}
+
+function saveQuoteAsTemplate() {
+    const nameInput = document.getElementById('quoteNameInput');
+    let name = nameInput ? nameInput.value.trim() : '';
+    
+    if (!name) {
+        name = prompt('Enter template name:');
+        if (!name) return;
+    }
+    
+    if (quoteCart.length === 0) {
+        alert('Cart is empty');
+        return;
+    }
+    
+    const template = {
+        id: 'template_' + Date.now(),
+        name: name + ' (Template)',
+        items: JSON.parse(JSON.stringify(quoteCart)),
+        createdAt: new Date().toISOString()
+    };
+    
+    quoteTemplates.unshift(template);
+    persistQuotes();
+    
+    showNotification(`✅ Template "${name}" created!`, 'success');
+    renderQuoteTemplatesSection();
+}
+
+function loadQuote(quoteId) {
+    const quote = savedQuotes.find(q => q.id === quoteId);
+    if (!quote) return;
+    
+    quoteCart = JSON.parse(JSON.stringify(quote.items));
+    activeQuote.name = quote.name;
+    
+    updateQuoteCartBadge();
+    renderActiveQuoteSection();
+    showNotification(`📋 Quote "${quote.name}" loaded`, 'success');
+    
+    // Scroll to active quote section
+    document.getElementById('activeQuoteSection')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+function duplicateQuote(quoteId) {
+    const quote = savedQuotes.find(q => q.id === quoteId);
+    if (!quote) return;
+    
+    const newQuote = {
+        ...quote,
+        id: 'quote_' + Date.now(),
+        name: quote.name + ' (Copy)',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+    };
+    
+    savedQuotes.unshift(newQuote);
+    persistQuotes();
+    
+    showNotification(`📋 Quote duplicated!`, 'success');
+    renderPastQuotesSection();
+}
+
+function convertQuoteToTemplate(quoteId) {
+    const quote = savedQuotes.find(q => q.id === quoteId);
+    if (!quote) return;
+    
+    const template = {
+        id: 'template_' + Date.now(),
+        name: quote.name + ' (Template)',
+        items: JSON.parse(JSON.stringify(quote.items)),
+        createdAt: new Date().toISOString()
+    };
+    
+    quoteTemplates.unshift(template);
+    persistQuotes();
+    
+    showNotification(`📑 Template created from quote!`, 'success');
+    renderQuoteTemplatesSection();
+}
+
+function deleteQuote(quoteId) {
+    const quote = savedQuotes.find(q => q.id === quoteId);
+    if (!quote) return;
+    
+    if (confirm(`Delete quote "${quote.name}"?`)) {
+        savedQuotes = savedQuotes.filter(q => q.id !== quoteId);
+        persistQuotes();
+        renderPastQuotesSection();
+        showNotification('Quote deleted', 'info');
+    }
+}
+
+function useTemplate(templateId) {
+    const template = quoteTemplates.find(t => t.id === templateId);
+    if (!template) return;
+    
+    quoteCart = JSON.parse(JSON.stringify(template.items));
+    activeQuote.name = template.name.replace(' (Template)', '');
+    
+    updateQuoteCartBadge();
+    renderActiveQuoteSection();
+    showNotification(`✨ Template "${template.name}" loaded!`, 'success');
+    
+    // Scroll to active quote section
+    document.getElementById('activeQuoteSection')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+function editTemplate(templateId) {
+    const template = quoteTemplates.find(t => t.id === templateId);
+    if (!template) return;
+    
+    const newName = prompt('Edit template name:', template.name);
+    if (newName && newName !== template.name) {
+        template.name = newName;
+        persistQuotes();
+        renderQuoteTemplatesSection();
+        showNotification('Template updated', 'success');
+    }
+}
+
+function deleteTemplate(templateId) {
+    const template = quoteTemplates.find(t => t.id === templateId);
+    if (!template) return;
+    
+    if (confirm(`Delete template "${template.name}"?`)) {
+        quoteTemplates = quoteTemplates.filter(t => t.id !== templateId);
+        persistQuotes();
+        renderQuoteTemplatesSection();
+        showNotification('Template deleted', 'info');
+    }
+}
+
+function searchQuotes(searchTerm) {
+    quotesPageFilters.searchTerm = searchTerm;
+    renderPastQuotesSection();
+}
+
+function sortQuotes(sortBy) {
+    quotesPageFilters.sortBy = sortBy;
+    renderPastQuotesSection();
+}
+
+// ==========================
+// QUOTES PAGE TAB SWITCHING
+// ==========================
+
+function switchQuoteTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.quote-tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remove active from all tabs
+    document.querySelectorAll('#quotes .tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Show selected tab content
+    let contentId = '';
+    switch(tabName) {
+        case 'new':
+            contentId = 'newQuoteTab';
+            break;
+        case 'active':
+            contentId = 'activeQuoteTab';
+            renderActiveQuoteSection();
+            break;
+        case 'past':
+            contentId = 'pastQuotesTab';
+            renderPastQuotesSection();
+            break;
+        case 'templates':
+            contentId = 'templatesTab';
+            renderQuoteTemplatesSection();
+            break;
+    }
+    
+    document.getElementById(contentId)?.classList.add('active');
+    
+    // Add active to clicked tab
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
+}
+
+// ==========================
+// AI QUOTE GENERATION
+// ==========================
+
+function generateAIQuote() {
+    const quoteName = document.getElementById('newQuoteName')?.value.trim();
+    const eventType = document.getElementById('newQuoteEventType')?.value;
+    const eventDate = document.getElementById('newQuoteDate')?.value;
+    const duration = document.getElementById('newQuoteDuration')?.value;
+    const location = document.getElementById('newQuoteLocation')?.value;
+    const attendance = document.getElementById('newQuoteAttendance')?.value;
+    const requirements = document.getElementById('newQuoteRequirements')?.value;
+    
+    // Get location type
+    const locationTypeRadio = document.querySelector('input[name="location-type"]:checked');
+    const locationType = locationTypeRadio ? locationTypeRadio.value : '';
+    
+    // Validation
+    if (!quoteName) {
+        alert('Please enter a quote name');
+        return;
+    }
+    
+    if (eventType === 'Select event type...') {
+        alert('Please select an event type');
+        return;
+    }
+    
+    // Generate AI recommendations based on inputs
+    const recommendedEquipment = getAIRecommendedEquipment(eventType, attendance, locationType, requirements);
+    
+    // Add recommended equipment to cart
+    quoteCart = []; // Clear existing cart
+    recommendedEquipment.forEach(equipId => {
+        const equipment = equipmentInventory.find(e => e.id === equipId.id);
+        if (equipment) {
+            quoteCart.push({
+                ...equipment,
+                quantity: equipId.quantity,
+                days: 1
+            });
+        }
+    });
+    
+    // Save quote name
+    activeQuote.name = quoteName;
+    
+    updateQuoteCartBadge();
+    
+    // Show result
+    displayAIQuoteResult(quoteName, eventType, attendance);
+    
+    // Show notification
+    showNotification('✨ AI-powered quote generated!', 'success');
+}
+
+function getAIRecommendedEquipment(eventType, attendance, locationType, requirements) {
+    // Simple AI logic based on event parameters
+    const recommended = [];
+    const attendanceNum = parseInt(attendance) || 0;
+    const requiresSilent = requirements?.toLowerCase().includes('silent') || 
+                          requirements?.toLowerCase().includes('quiet') ||
+                          eventType === 'Wedding';
+    const prioritizeHybrid = document.getElementById('newQuoteHybrid')?.checked;
+    
+    // Determine power needs based on attendance
+    if (attendanceNum < 500) {
+        // Small event - 150-300kW
+        if (requiresSilent || prioritizeHybrid) {
+            recommended.push({ id: 'gen-150-hybrid-1', quantity: 1 });
+        } else {
+            recommended.push({ id: 'gen-250-diesel-1', quantity: 1 });
+        }
+        // Add battery for silent operation
+        if (requiresSilent) {
+            recommended.push({ id: 'bat-storage-1', quantity: 1 });
+        }
+    } else if (attendanceNum < 2000) {
+        // Medium event - 300-500kW
+        if (prioritizeHybrid) {
+            recommended.push({ id: 'gen-300-hybrid-1', quantity: 1 });
+            recommended.push({ id: 'gen-150-hybrid-1', quantity: 1 });
+        } else {
+            recommended.push({ id: 'gen-500-hybrid-1', quantity: 1 });
+        }
+        recommended.push({ id: 'bat-storage-1', quantity: 1 }); // Backup
+    } else if (attendanceNum < 5000) {
+        // Large event - 500-750kW
+        recommended.push({ id: 'gen-500-hybrid-1', quantity: 1 });
+        recommended.push({ id: 'gen-300-hybrid-1', quantity: 1 });
+        recommended.push({ id: 'bat-storage-2', quantity: 1 });
+    } else {
+        // Very large event - 1000kW+
+        recommended.push({ id: 'gen-1000-hybrid-1', quantity: 1 });
+        recommended.push({ id: 'gen-500-hybrid-1', quantity: 1 });
+        recommended.push({ id: 'bat-storage-2', quantity: 2 });
+    }
+    
+    // Add accessories
+    recommended.push({ id: 'dist-panel-1', quantity: Math.ceil(recommended.length / 2) });
+    recommended.push({ id: 'cable-pack-1', quantity: recommended.length });
+    
+    // Add solar if sustainability is priority
+    if (prioritizeHybrid && locationType === 'outdoor') {
+        recommended.push({ id: 'solar-panel-1', quantity: 2 });
+    }
+    
+    return recommended;
+}
+
+function displayAIQuoteResult(quoteName, eventType, attendance) {
+    const resultDiv = document.getElementById('aiQuoteResult');
+    if (!resultDiv) return;
+    
+    const subtotal = quoteCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const total = subtotal * 1.08;
+    const itemCount = quoteCart.reduce((sum, item) => sum + item.quantity, 0);
+    
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = `
+        <div style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; padding: 30px; border-radius: 16px; margin-bottom: 20px; text-align: center;">
+            <div style="font-size: 1.2em; margin-bottom: 10px; opacity: 0.9;">✨ AI-Generated Quote</div>
+            <div style="font-size: 3em; font-weight: 800; margin-bottom: 10px;">$${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+            <div style="opacity: 0.9;">${quoteName} • ${itemCount} items recommended</div>
+        </div>
+        
+        <div class="card">
+            <h3 style="margin-bottom: 20px;">📦 AI Recommended Solution</h3>
+            
+            <div style="background: #dbeafe; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: start; gap: 10px;">
+                    <span style="font-size: 1.5em;">🤖</span>
+                    <div>
+                        <div style="font-weight: 600; color: #1e40af; margin-bottom: 5px;">Why These Recommendations?</div>
+                        <div style="font-size: 0.9em; color: #1e3a8a;">
+                            Based on your ${eventType.toLowerCase()} with ${attendance} attendees, our AI selected equipment 
+                            optimized for capacity, reliability, and sustainability. This solution provides ${Math.round(quoteCart.reduce((sum, item) => item.power * item.quantity + sum, 0))}kW total capacity 
+                            with built-in redundancy.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                <h4 style="margin-bottom: 15px; color: #3b82f6;">Equipment Included:</h4>
+                <div style="display: grid; gap: 12px;">
+                    ${quoteCart.map(item => `
+                        <div style="display: flex; justify-content: space-between; padding: 12px; background: white; border-radius: 8px;">
+                            <span>${item.emoji} ${item.quantity}x ${item.name}</span>
+                            <span style="font-weight: 600;">$${(item.price * item.quantity).toLocaleString()}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="grid-2" style="margin-bottom: 20px;">
+                <div style="background: #dcfce7; padding: 20px; border-radius: 12px; border: 2px solid #10b981;">
+                    <div style="font-weight: 600; color: #065f46; margin-bottom: 8px;">🌱 Sustainability Impact</div>
+                    <div style="color: #047857; font-size: 0.95em; line-height: 1.6;">
+                        • Hybrid systems save 65% fuel<br>
+                        • Estimated 3.8 tons CO₂ saved<br>
+                        • Equivalent to 88 trees planted
+                    </div>
+                </div>
+                <div style="background: #dbeafe; padding: 20px; border-radius: 12px; border: 2px solid #3b82f6;">
+                    <div style="font-weight: 600; color: #1e40af; margin-bottom: 8px;">💰 Pricing Breakdown</div>
+                    <div style="color: #1e3a8a; font-size: 0.95em; line-height: 1.6;">
+                        • Subtotal: $${subtotal.toLocaleString()}<br>
+                        • Tax (8%): $${(subtotal * 0.08).toFixed(2)}<br>
+                        • <strong>Total: $${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-success" style="flex: 1; padding: 16px; font-size: 1.05em;" onclick="switchQuoteTab('active')">
+                    ✅ Review & Save Quote
+                </button>
+                <button class="btn btn-outline" style="padding: 16px;" onclick="showPage('equipment')">
+                    ✏️ Customize Equipment
+                </button>
+                <button class="btn btn-outline" style="padding: 16px;" onclick="document.getElementById('aiQuoteResult').style.display='none'; quoteCart=[];">
+                    🔄 Start Over
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Scroll to result
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Update addToQuote to show notification about Active Quote tab
+function addToQuoteEnhanced(equipmentId) {
+    addToQuote(equipmentId); // Call original function
+    
+    // Add extra notification
+    setTimeout(() => {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            z-index: 10000;
+            cursor: pointer;
+            animation: slideIn 0.3s ease-out;
+            font-weight: 500;
+        `;
+        notification.innerHTML = `
+            <div>Item added to quote!</div>
+            <div style="font-size: 0.85em; opacity: 0.9; margin-top: 5px;">
+                Click here or go to Quotes → Active Quote to review
+            </div>
+        `;
+        notification.onclick = () => {
+            showPage('quotes');
+            switchQuoteTab('active');
+            notification.remove();
+        };
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+    }, 500);
 }
