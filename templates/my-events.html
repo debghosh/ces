@@ -1,93 +1,153 @@
-                <div class="page-header">
-                    <h1 class="page-title">My Events</h1>
-                    <p class="page-subtitle">Manage all your events in one place</p>
-                </div>
-                
-                <div class="filters">
-                    <select class="filter-select">
-                        <option>All Events</option>
-                        <option>Active</option>
-                        <option>Upcoming</option>
-                        <option>Completed</option>
-                    </select>
-                    <select class="filter-select">
-                        <option>All Time</option>
-                        <option>This Month</option>
-                        <option>Next 30 Days</option>
-                        <option>This Quarter</option>
-                    </select>
-                    <div class="search-box">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" placeholder="Search events...">
-                    </div>
-                    <button class="btn btn-primary" onclick="showPage('quotes')">+ New Event</button>
-                </div>
-                
-                <div class="card">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Event Name</th>
-                                <th>Date</th>
-                                <th>Location</th>
-                                <th>Equipment</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div style="font-weight: 600;">🎸 Austin Music Festival</div>
-                                    <div style="font-size: 0.85em; color: #64748b;">8,500 attendees</div>
-                                </td>
-                                <td>Oct 18-20, 2025</td>
-                                <td>Austin, TX</td>
-                                <td>4x 500kW Hybrid</td>
-                                <td><span class="badge badge-success">Active</span></td>
-                                <td>
-                                    <button class="btn btn-outline" style="padding: 8px 16px; font-size: 0.85em;">View</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div style="font-weight: 600;">🎬 Downtown Film Production</div>
-                                    <div style="font-size: 0.85em; color: #64748b;">Silent power required</div>
-                                </td>
-                                <td>Oct 19-22, 2025</td>
-                                <td>Dallas, TX</td>
-                                <td>2x Battery Storage</td>
-                                <td><span class="badge badge-success">Active</span></td>
-                                <td>
-                                    <button class="btn btn-outline" style="padding: 8px 16px; font-size: 0.85em;">View</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div style="font-weight: 600;">💍 Lakeside Wedding</div>
-                                    <div style="font-size: 0.85em; color: #64748b;">250 guests</div>
-                                </td>
-                                <td>Oct 21, 2025</td>
-                                <td>Austin, TX</td>
-                                <td>1x 150kW Hybrid</td>
-                                <td><span class="badge badge-info">Upcoming</span></td>
-                                <td>
-                                    <button class="btn btn-outline" style="padding: 8px 16px; font-size: 0.85em;">View</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div style="font-weight: 600;">🏢 Tech Conference 2025</div>
-                                    <div style="font-size: 0.85em; color: #64748b;">2,000 attendees</div>
-                                </td>
-                                <td>Oct 25-27, 2025</td>
-                                <td>Houston, TX</td>
-                                <td>3x 300kW Hybrid</td>
-                                <td><span class="badge badge-info">Upcoming</span></td>
-                                <td>
-                                    <button class="btn btn-outline" style="padding: 8px 16px; font-size: 0.85em;">View</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+<div class="page-header">
+    <h1 class="page-title">My Events</h1>
+    <p class="page-subtitle">Manage all your events in one place</p>
+</div>
+
+<div class="filters">
+    <select class="filter-select">
+        <option>All Events</option>
+        <option>Active</option>
+        <option>Upcoming</option>
+        <option>Completed</option>
+    </select>
+    <select class="filter-select">
+        <option>All Time</option>
+        <option>This Month</option>
+        <option>Next 30 Days</option>
+        <option>This Quarter</option>
+    </select>
+    <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search events...">
+    </div>
+    <button class="btn btn-primary" onclick="navigateTo('quotes')">+ New Event</button>
+</div>
+
+<div class="card">
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Equipment</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="event-name">🎸 Austin Music Festival</div>
+                        <div class="event-meta">8,500 attendees</div>
+                    </td>
+                    <td>Oct 18-20, 2025</td>
+                    <td>Austin, TX</td>
+                    <td>4x 500kW Hybrid</td>
+                    <td><span class="badge badge-success">Active</span></td>
+                    <td>
+                        <button class="btn btn-outline btn-sm">View</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="event-name">🎬 Downtown Film Production</div>
+                        <div class="event-meta">Silent power required</div>
+                    </td>
+                    <td>Oct 19-22, 2025</td>
+                    <td>Dallas, TX</td>
+                    <td>2x Battery Storage</td>
+                    <td><span class="badge badge-success">Active</span></td>
+                    <td>
+                        <button class="btn btn-outline btn-sm">View</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="event-name">💍 Lakeside Wedding</div>
+                        <div class="event-meta">250 guests</div>
+                    </td>
+                    <td>Oct 21, 2025</td>
+                    <td>Austin, TX</td>
+                    <td>1x 150kW Hybrid</td>
+                    <td><span class="badge badge-info">Upcoming</span></td>
+                    <td>
+                        <button class="btn btn-outline btn-sm">View</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="event-name">🏢 Tech Conference 2025</div>
+                        <div class="event-meta">2,000 attendees</div>
+                    </td>
+                    <td>Oct 25-27, 2025</td>
+                    <td>Houston, TX</td>
+                    <td>3x 300kW Hybrid</td>
+                    <td><span class="badge badge-info">Upcoming</span></td>
+                    <td>
+                        <button class="btn btn-outline btn-sm">View</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+/* Table container - enable horizontal scroll */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+}
+
+/* Event name/meta styles */
+.event-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+    min-width: 180px;
+}
+
+.event-meta {
+    font-size: 0.85em;
+    color: #64748b;
+}
+
+/* Small button utility */
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85em;
+    white-space: nowrap;
+}
+
+/* Force table to be wider than container on mobile */
+@media (max-width: 768px) {
+    .table {
+        min-width: 800px; /* Forces horizontal scroll */
+        width: 800px;
+    }
+    
+    .table th,
+    .table td {
+        padding: 10px 12px;
+        font-size: 0.85em;
+    }
+    
+    /* Keep first column visible while scrolling */
+    .table th:first-child,
+    .table td:first-child {
+        position: sticky;
+        left: 0;
+        background: white;
+        z-index: 2;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    }
+    
+    .table th:first-child {
+        background: #f8fafc;
+        z-index: 3;
+    }
+}
+</style>

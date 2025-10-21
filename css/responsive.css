@@ -1,0 +1,382 @@
+/* =====================================================
+   RESPONSIVE DESIGN - BULLETPROOF VERSION
+   Stronger specificity to override base styles
+   ===================================================== */
+
+/* ===== MOBILE MENU BUTTON ===== */
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 8px 12px;
+    margin-right: 10px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.mobile-menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu-toggle:active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ===== DESKTOP - Ensure sidebar is visible and positioned correctly ===== */
+@media (min-width: 769px) {
+    .sidebar {
+        position: static !important;
+        left: auto !important;
+        top: auto !important;
+        transform: none !important;
+        display: block !important;
+        width: 260px !important;
+        height: auto !important;
+        z-index: auto !important;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
+    }
+    
+    .mobile-menu-toggle {
+        display: none !important;
+    }
+}
+
+/* ===== MOBILE BREAKPOINT ===== */
+@media (max-width: 768px) {
+    /* Show hamburger menu */
+    .mobile-menu-toggle {
+        display: block !important;
+    }
+    
+    /* Sidebar - off screen by default */
+    .sidebar {
+        position: fixed !important;
+        left: -260px !important;
+        top: 70px !important;
+        bottom: 0;
+        width: 260px !important;
+        height: calc(100vh - 70px) !important;
+        z-index: 1000 !important;
+        background: white !important;
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        transform: translateX(0) !important;
+        overflow-y: auto;
+        display: block !important;
+    }
+    
+    /* Sidebar visible state */
+    .sidebar.open {
+        transform: translateX(260px) !important;
+    }
+    
+    /* Dark overlay */
+    .sidebar-overlay {
+        position: fixed !important;
+        top: 70px !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        z-index: 999 !important;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        display: block !important;
+    }
+    
+    .sidebar-overlay.active {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    /* Content takes full width */
+    .content {
+        width: 100% !important;
+        padding: 15px !important;
+        max-width: none !important;
+    }
+    
+    /* Header adjustments */
+    .header {
+        padding: 0 15px !important;
+    }
+    
+    .logo {
+        font-size: 1.2em !important;
+    }
+    
+    /* Hide user profile text */
+    .user-profile > div {
+        display: none !important;
+    }
+    
+    .user-profile {
+        gap: 0 !important;
+    }
+    
+    /* Stats grid - single column */
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    .stat-card {
+        margin-bottom: 15px !important;
+    }
+    
+    .stat-value {
+        font-size: 2em !important;
+    }
+    
+    /* Cards */
+    .card {
+        padding: 15px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .card-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 15px !important;
+    }
+    
+    /* Page headers */
+    .page-title {
+        font-size: 1.5em !important;
+    }
+    
+    .page-subtitle {
+        font-size: 0.9em !important;
+    }
+    
+    /* Tables */
+    .table-container {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 -15px !important;
+        padding: 0 15px !important;
+    }
+    
+    .table {
+        min-width: 700px !important;
+    }
+    
+    .table th,
+    .table td {
+        padding: 12px 10px !important;
+        font-size: 0.85em !important;
+        white-space: nowrap;
+    }
+    
+    /* Sticky first column */
+    .table th:first-child,
+    .table td:first-child {
+        position: sticky;
+        left: 0;
+        background: white;
+        z-index: 1;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .table th:first-child {
+        background: #f8fafc;
+        z-index: 2;
+    }
+    
+    /* Filters */
+    .filters {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    .filter-select,
+    .search-box {
+        width: 100% !important;
+        min-width: auto !important;
+    }
+    
+    .search-box input {
+        width: 100% !important;
+    }
+    
+    /* Buttons */
+    .btn {
+        padding: 14px 20px !important;
+        font-size: 1em !important;
+        min-height: 44px !important;
+    }
+    
+    .card-header .btn {
+        width: 100% !important;
+    }
+    
+    /* Grids */
+    .grid-2,
+    .grid-3 {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .monitoring-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .equipment-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .quick-actions {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    .quick-action {
+        width: 100% !important;
+    }
+    
+    /* Event cards */
+    .event-card {
+        margin-bottom: 15px !important;
+    }
+    
+    .event-details {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    /* Recommendation cards */
+    .recommendation-card {
+        margin-bottom: 15px !important;
+    }
+    
+    .recommendation-metrics {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    .recommendation-actions {
+        flex-direction: column !important;
+    }
+    
+    .recommendation-actions .btn {
+        width: 100% !important;
+    }
+    
+    /* Chat widget */
+    .chat-window {
+        width: 100% !important;
+        height: calc(100vh - 140px) !important;
+        right: 0 !important;
+        left: 0 !important;
+        bottom: 70px !important;
+        border-radius: 20px 20px 0 0 !important;
+    }
+    
+    .chat-bubble-btn {
+        bottom: 15px !important;
+        right: 15px !important;
+        width: 55px !important;
+        height: 55px !important;
+    }
+    
+    /* Tabs */
+    .tabs {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap !important;
+    }
+    
+    .tab {
+        padding: 10px 15px !important;
+        font-size: 0.9em !important;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    
+    /* Quote cart panel */
+    .quote-cart-panel {
+        width: 100% !important;
+        right: -100% !important;
+    }
+    
+    .quote-cart-panel.open {
+        right: 0 !important;
+    }
+    
+    /* Monitor cards */
+    .monitor-card {
+        margin-bottom: 15px !important;
+    }
+    
+    /* Metric rows */
+    .metric-row {
+        flex-wrap: wrap !important;
+    }
+}
+
+/* ===== TABLET (769px - 1023px) ===== */
+@media (min-width: 769px) and (max-width: 1023px) {
+    .sidebar {
+        width: 200px !important;
+    }
+    
+    .nav-item {
+        padding: 12px 20px;
+        font-size: 0.9em;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* ===== TOUCH DEVICE IMPROVEMENTS ===== */
+@media (hover: none) and (pointer: coarse) {
+    .nav-item {
+        min-height: 48px;
+    }
+    
+    button,
+    .btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Disable hover effects */
+    .nav-item:hover,
+    .card:hover,
+    .event-card:hover {
+        transform: none;
+        box-shadow: inherit;
+    }
+}
+
+/* ===== TABLE-SPECIFIC STYLES ===== */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.event-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+    white-space: normal;
+}
+
+.event-meta {
+    font-size: 0.85em;
+    color: #64748b;
+    white-space: normal;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85em;
+}

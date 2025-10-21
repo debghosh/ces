@@ -1653,3 +1653,91 @@ if (typeof window !== 'undefined') {
         toggleChat
     };
 }
+
+// ==========================
+// MOBILE MENU
+// ==========================
+
+// ==========================
+// MOBILE MENU - CLEAN VERSION
+// Add this ONCE at the end of app.js
+// Remove any duplicate toggleSidebar functions
+// ==========================
+
+/**
+ * Toggle mobile sidebar menu
+ * Handles opening/closing with proper accessibility
+ */
+window.toggleSidebar = function() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    const body = document.body;
+    
+    if (!sidebar || !overlay) {
+        console.error('❌ Sidebar elements not found. Check HTML structure.');
+        return;
+    }
+    
+    // Toggle classes
+    const isOpening = !sidebar.classList.contains('open');
+    
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+    
+    // Prevent body scroll when menu is open
+    body.style.overflow = isOpening ? 'hidden' : '';
+    
+    // Log for debugging (remove in production)
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.log(`📱 Menu ${isOpening ? 'opened' : 'closed'}`);
+    }
+};
+
+/**
+ * Close sidebar when clicking nav items on mobile
+ */
+function closeSidebarOnNavClick() {
+    if (window.innerWidth <= 768) {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        
+        if (sidebar?.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            overlay?.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+}
+
+/**
+ * Initialize mobile menu
+ * Call this once when DOM is ready
+ */
+function initMobileMenu() {
+    // Add click handlers to nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', closeSidebarOnNavClick);
+    });
+    
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar?.classList.contains('open')) {
+                window.toggleSidebar();
+            }
+        }
+    });
+    
+    console.log('✅ Mobile menu initialized');
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileMenu);
+} else {
+    initMobileMenu();
+}
+
+// Also export for navigateTo if not already done
+window.navigateTo = window.navigateTo || navigateTo;
