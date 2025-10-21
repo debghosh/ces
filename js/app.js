@@ -301,6 +301,7 @@ function searchEquipment(searchTerm) {
     updateEquipmentDisplay();
 }
 
+// Update the addToQuote function - replace the entire function
 function addToQuote(equipmentId) {
     const equipment = equipmentInventory.find(item => item.id === equipmentId);
     if (!equipment) return;
@@ -324,7 +325,7 @@ function addToQuote(equipmentId) {
     showNotification(`✅ ${equipment.name} added to quote!`, 'success');
     updateQuoteCartBadge();
     
-    // Show additional notification with action
+    // Show additional notification with action - STAYS FOR 10 SECONDS
     setTimeout(() => {
         const notification = document.createElement('div');
         notification.style.cssText = `
@@ -333,18 +334,25 @@ function addToQuote(equipmentId) {
             right: 30px;
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
-            padding: 16px 24px;
+            padding: 20px 24px;
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             z-index: 10000;
             cursor: pointer;
             animation: slideIn 0.3s ease-out;
             font-weight: 500;
+            min-width: 280px;
         `;
         notification.innerHTML = `
-            <div style="font-size: 1.05em; margin-bottom: 5px;">📋 View your quote</div>
+            <div style="font-size: 1.1em; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                <span>📋</span>
+                <span>View Your Quote</span>
+            </div>
             <div style="font-size: 0.85em; opacity: 0.9;">
-                Click here to review and save
+                Click here to review and save your quote
+            </div>
+            <div style="font-size: 0.75em; opacity: 0.7; margin-top: 8px;">
+                Auto-closes in 10 seconds
             </div>
         `;
         notification.onclick = () => {
@@ -355,10 +363,11 @@ function addToQuote(equipmentId) {
         
         document.body.appendChild(notification);
         
+        // Remove after 10 seconds instead of 5
         setTimeout(() => {
             notification.style.animation = 'slideOut 0.3s ease-out';
             setTimeout(() => notification.remove(), 300);
-        }, 5000);
+        }, 10000);
     }, 500);
 }
 
@@ -392,12 +401,14 @@ function showNotification(message, type = 'info') {
 function updateQuoteCartBadge() {
     const totalItems = quoteCart.reduce((sum, item) => sum + item.quantity, 0);
     
-    // Update notification badge (we'll use this as quote cart indicator for now)
-    const badge = document.querySelector('.notification-badge');
+    // Update notification badge
+    const badge = document.getElementById('quoteBadge');
     if (badge) {
         badge.textContent = totalItems;
         if (totalItems > 0) {
             badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
         }
     }
 }
