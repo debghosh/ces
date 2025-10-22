@@ -1739,5 +1739,45 @@ if (document.readyState === 'loading') {
     initMobileMenu();
 }
 
+// ===== FIX MOBILE TABLE STICKY OVERLAP =====
+// Forcefully override inline position styles on mobile
+function removeStickyOnMobile() {
+    if (window.innerWidth <= 768) {
+        const firstCells = document.querySelectorAll('.table td:first-child, .table th:first-child');
+        firstCells.forEach(cell => {
+            // Remove inline position style
+            cell.style.removeProperty('position');
+            cell.style.removeProperty('left');
+            cell.style.removeProperty('transform');
+            cell.style.removeProperty('z-index');
+            
+            // Force static positioning
+            cell.style.setProperty('position', 'static', 'important');
+            cell.style.setProperty('background', '#f0f9ff', 'important');
+            cell.style.setProperty('border-right', '2px solid #3b82f6', 'important');
+        });
+    }
+}
+
+// Run on every page navigation
+if (window.PageRouter) {
+    const originalRenderPage = PageRouter.renderPage;
+    PageRouter.renderPage = function(pageName, html) {
+        originalRenderPage.call(this, pageName, html);
+        setTimeout(removeStickyOnMobile, 150);
+    };
+}
+
+// Also run on window resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(removeStickyOnMobile, 100);
+});
+
+// Run immediately
+removeStickyOnMobile();
+console.log('✅ Mobile table fix loaded');
+
 // Also export for navigateTo if not already done
 window.navigateTo = window.navigateTo || navigateTo;

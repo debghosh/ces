@@ -1,6 +1,8 @@
 /* =====================================================
-   RESPONSIVE DESIGN - BULLETPROOF VERSION
-   Stronger specificity to override base styles
+   RESPONSIVE DESIGN - COMPLETE FIXED VERSION
+   ✓ Mobile menu working
+   ✓ Chat window fixed for mobile
+   ✓ Table sticky columns fixed (no overlap)
    ===================================================== */
 
 /* ===== MOBILE MENU BUTTON ===== */
@@ -156,16 +158,19 @@
         font-size: 0.9em !important;
     }
     
-    /* Tables */
+    /* Tables - Mobile specific */
     .table-container {
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch;
         margin: 0 -15px !important;
         padding: 0 15px !important;
+        position: relative !important;
     }
     
     .table {
-        min-width: 700px !important;
+        min-width: 800px !important;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
     }
     
     .table th,
@@ -173,21 +178,26 @@
         padding: 12px 10px !important;
         font-size: 0.85em !important;
         white-space: nowrap;
+        background: white !important;
     }
     
-    /* Sticky first column */
+    /* MOBILE FIX: Disable sticky - prevents overlap issue */
     .table th:first-child,
     .table td:first-child {
-        position: sticky;
-        left: 0;
-        background: white;
-        z-index: 1;
-        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+        position: static !important; /* Disable sticky on mobile */
+        background: #f0f9ff !important; /* Light blue background for visibility */
+        border-right: 2px solid #3b82f6 !important; /* Visual separator */
+        font-weight: 600 !important;
+        min-width: 140px;
+        max-width: 200px;
     }
     
     .table th:first-child {
-        background: #f8fafc;
-        z-index: 2;
+        background: #dbeafe !important; /* Slightly darker blue for header */
+    }
+    
+    .table tr:hover td:first-child {
+        background: #e0f2fe !important;
     }
     
     /* Filters */
@@ -268,24 +278,18 @@
         width: 100% !important;
     }
     
-    /* Chat widget */
-   .chat-window {
+    /* Chat widget - FIXED FOR MOBILE */
+    .chat-window {
         width: 100% !important;
         right: 0 !important;
         left: 0 !important;
         border-radius: 20px 20px 0 0 !important;
         
-        /* FIX: Use top + bottom instead of height */
-        /* This ensures the window fits perfectly in available space */
-        top: 70px !important;           /* Space for header */
-        bottom: 70px !important;        /* Space for chat button */
-        height: auto !important;        /* Let it calculate naturally */
-        max-height: none !important;    /* Remove any max-height constraints */
-        
-        /* Alternative fix if you prefer explicit height: */
-        /* bottom: 70px !important; */
-        /* height: calc(100vh - 140px) !important; */
-        /* But then MUST set: top: auto !important; */
+        /* Use top + bottom positioning to prevent cut-off */
+        top: 70px !important;
+        bottom: 70px !important;
+        height: auto !important;
+        max-height: none !important;
     }
     
     .chat-bubble-btn {
@@ -358,7 +362,7 @@
         min-width: 44px;
     }
     
-    /* Disable hover effects */
+    /* Disable hover effects on touch devices */
     .nav-item:hover,
     .card:hover,
     .event-card:hover {
@@ -367,26 +371,132 @@
     }
 }
 
-/* ===== TABLE-SPECIFIC STYLES ===== */
+/* =====================================================
+   TABLE STYLES - FIXED STICKY COLUMNS (ALL SCREENS)
+   This fixes the "ghostly overlap" issue
+   ===================================================== */
+
+/* Base table container */
 .table-container {
+    position: relative;
     width: 100%;
     overflow-x: auto;
+    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
 }
 
+/* Base table - CRITICAL FIX: separate border-collapse */
+.table {
+    width: 100%;
+    border-collapse: separate; /* CRITICAL: prevents overlap issues */
+    border-spacing: 0; /* Keep borders tight */
+    table-layout: auto;
+    min-width: 800px;
+    isolation: isolate; /* CRITICAL: Creates new stacking context */
+    position: relative; /* Establishes containing block */
+}
+
+.table th {
+    text-align: left;
+    padding: 15px;
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.table td {
+    padding: 15px;
+    border-bottom: 1px solid #f1f5f9;
+    background: white; /* CRITICAL: solid background prevents transparency */
+    white-space: nowrap;
+}
+
+.table tr:hover td {
+    background: #f8fafc;
+}
+
+/* Sticky first column - ULTRA AGGRESSIVE FIX */
+.table th:first-child,
+.table td:first-child {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 10 !important; /* Much higher z-index */
+    background: white !important;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15) !important; /* Stronger shadow */
+    /* Force GPU acceleration for better rendering */
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+.table th:first-child {
+    background: #f8fafc !important;
+    z-index: 11 !important; /* Header even higher */
+}
+
+.table tr:hover td:first-child {
+    background: #f8fafc !important; /* Match hover state */
+}
+
+/* Force non-sticky cells to render below */
+.table th:not(:first-child),
+.table td:not(:first-child) {
+    z-index: 1 !important;
+    background: white !important;
+    /* Use transform to create stacking context without position:relative */
+    transform: translateZ(0);
+}
+
+.table tr:hover td:not(:first-child) {
+    background: #f8fafc !important;
+}
+
+/* Event name and meta styles */
 .event-name {
     font-weight: 600;
     margin-bottom: 4px;
     white-space: normal;
+    line-height: 1.4;
+    max-width: 250px;
 }
 
 .event-meta {
     font-size: 0.85em;
     color: #64748b;
     white-space: normal;
+    line-height: 1.3;
 }
 
+/* Button styles in tables */
 .btn-sm {
     padding: 8px 16px;
     font-size: 0.85em;
+    white-space: nowrap;
 }
+
+/* Status badges in tables */
+.table .badge {
+    white-space: nowrap;
+    display: inline-block;
+}
+
+/* Event details in tables */
+.table .event-detail {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-right: 15px;
+}
+
+/* Ensure action buttons are visible */
+.table .btn,
+.table .btn-sm {
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== END OF RESPONSIVE CSS ===== */
