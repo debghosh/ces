@@ -269,13 +269,23 @@
     }
     
     /* Chat widget */
-    .chat-window {
+   .chat-window {
         width: 100% !important;
-        height: calc(100vh - 140px) !important;
         right: 0 !important;
         left: 0 !important;
-        bottom: 70px !important;
         border-radius: 20px 20px 0 0 !important;
+        
+        /* FIX: Use top + bottom instead of height */
+        /* This ensures the window fits perfectly in available space */
+        top: 70px !important;           /* Space for header */
+        bottom: 70px !important;        /* Space for chat button */
+        height: auto !important;        /* Let it calculate naturally */
+        max-height: none !important;    /* Remove any max-height constraints */
+        
+        /* Alternative fix if you prefer explicit height: */
+        /* bottom: 70px !important; */
+        /* height: calc(100vh - 140px) !important; */
+        /* But then MUST set: top: auto !important; */
     }
     
     .chat-bubble-btn {

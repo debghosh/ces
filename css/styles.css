@@ -662,7 +662,7 @@ body {
     bottom: 100px;
     right: 30px;
     width: 400px;
-    height: 600px;
+    height: clamp(380px, calc(100vh - 160px), 640px);
     max-height: calc(100vh - 120px);
     background: white;
     border-radius: 20px;
