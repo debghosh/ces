@@ -5,10 +5,10 @@
                 
                 <!-- Tabs for different sections -->
                 <div class="tabs">
-                    <div class="tab active" onclick="switchQuoteTab('new')">⚡ New Quote</div>
-                    <div class="tab" onclick="switchQuoteTab('active')">🛒 Active Quote</div>
-                    <div class="tab" onclick="switchQuoteTab('past')">📋 Past Quotes</div>
-                    <div class="tab" onclick="switchQuoteTab('templates')">📑 Templates</div>
+                    <div class="tab active">⚡ New Quote</div>
+                    <div class="tab">🛒 Active Quote</div>
+                    <div class="tab">📋 Past Quotes</div>
+                    <div class="tab">📑 Templates</div>
                 </div>
                 
                 <!-- New Quote Section (Quick Quote Form) -->
@@ -121,7 +121,7 @@
                             
                             <div style="text-align: center; margin-top: 30px; padding-top: 30px; border-top: 2px dashed #e2e8f0;">
                                 <p style="color: #64748b; margin-bottom: 15px;">Or manually add equipment to build your quote</p>
-                                <button class="btn btn-outline" onclick="showPage('equipment')">🔌 Browse Equipment Catalog</button>
+                                <button class="btn btn-outline" onclick="navigateTo('equipment')">🔌 Browse Equipment Catalog</button>
                             </div>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                         <div class="card-header">
                             <h2 class="card-title">🛒 Active Quote</h2>
                             <div style="display: flex; gap: 10px;">
-                                <button class="btn btn-outline" onclick="showPage('equipment')">+ Add Equipment</button>
+                                <button class="btn btn-outline" onclick="navigateTo('equipment')">+ Add Equipment</button>
                             </div>
                         </div>
                         <div id="activeQuoteSection">

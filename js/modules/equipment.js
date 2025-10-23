@@ -121,8 +121,28 @@
      */
     function setCategory(category) {
         filters.category = category;
+        
+        // Remove active class from all tabs
         document.querySelectorAll('#equipment .tab').forEach(tab => tab.classList.remove('active'));
-        if (event?.target) event.target.classList.add('active');
+        
+        // Map category to tab index
+        const categoryIndexMap = {
+            'all': 0,
+            'generator': 1,
+            'battery': 2,
+            'hybrid': 3,
+            'accessory': 4
+        };
+        
+        // Activate the corresponding tab
+        const tabIndex = categoryIndexMap[category];
+        if (tabIndex !== undefined) {
+            const tabs = document.querySelectorAll('#equipment .tabs .tab');
+            if (tabs[tabIndex]) {
+                tabs[tabIndex].classList.add('active');
+            }
+        }
+        
         updateEquipmentDisplay();
     }
     

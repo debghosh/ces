@@ -10,10 +10,140 @@
     console.log('🚀 CES Power Pro initializing...');
     
     /**
+     * Event Delegation Setup
+     * Handles all dynamically loaded content interactions
+     */
+    function initializeEventDelegation() {
+        console.log('🎯 Setting up event delegation...');
+        
+        // Central event delegation handler
+        document.addEventListener('click', function(e) {
+            const target = e.target;
+            
+            // Handle Quote Tabs - detect by tab content
+            const tab = target.closest('.tab');
+            if (tab) {
+                const tabsContainer = tab.parentElement;
+                const tabText = tab.textContent.trim();
+                
+                // Check if this is a quotes tab by its content
+                const isQuoteTab = tabText.includes('New Quote') || 
+                                  tabText.includes('Active Quote') || 
+                                  tabText.includes('Past Quotes') || 
+                                  tabText.includes('Templates') ||
+                                  tabText.includes('⚡') || 
+                                  tabText.includes('🛒') || 
+                                  tabText.includes('📋') || 
+                                  tabText.includes('📑');
+                
+                if (isQuoteTab && tabsContainer && tabsContainer.classList.contains('tabs')) {
+                    console.log('🎯 Quote tab clicked:', tabText);
+                    
+                    if (tabText.includes('New Quote') || tabText.includes('⚡')) {
+                        window.Quotes.switchQuoteTab('new');
+                    } else if (tabText.includes('Active Quote') || tabText.includes('🛒')) {
+                        window.Quotes.switchQuoteTab('active');
+                    } else if (tabText.includes('Past Quotes') || tabText.includes('📋')) {
+                        window.Quotes.switchQuoteTab('past');
+                    } else if (tabText.includes('Templates') || tabText.includes('📑')) {
+                        window.Quotes.switchQuoteTab('templates');
+                    }
+                    
+                    e.preventDefault();
+                    return;
+                }
+                
+                // Let Equipment module handle its own tabs - check for equipment page
+                if (tabsContainer && tabsContainer.classList.contains('tabs') && 
+                    tabsContainer.closest('#equipment')) {
+                    
+                    const equipTabText = tab.textContent.trim().toLowerCase();
+                    
+                    if (equipTabText.includes('all equipment')) {
+                        window.Equipment.setCategory('all');
+                    } else if (equipTabText.includes('generators')) {
+                        window.Equipment.setCategory('generator');
+                    } else if (equipTabText.includes('battery')) {
+                        window.Equipment.setCategory('battery');
+                    } else if (equipTabText.includes('hybrid')) {
+                        window.Equipment.setCategory('hybrid');
+                    } else if (equipTabText.includes('accessories')) {
+                        window.Equipment.setCategory('accessory');
+                    }
+                    
+                    e.preventDefault();
+                    return;
+                }
+            }
+            
+            // Handle Quick Action cards (if they have data attributes)
+            if (target.closest('.quick-action[data-page]')) {
+                const quickAction = target.closest('.quick-action');
+                const targetPage = quickAction.getAttribute('data-page');
+                if (targetPage && window.PageRouter) {
+                    window.PageRouter.loadPage(targetPage);
+                    e.preventDefault();
+                    return;
+                }
+            }
+            
+            // Handle nav items with data-page attribute
+            if (target.closest('.nav-item[data-page]')) {
+                const navItem = target.closest('.nav-item');
+                const targetPage = navItem.getAttribute('data-page');
+                if (targetPage && window.PageRouter) {
+                    window.PageRouter.loadPage(targetPage);
+                    e.preventDefault();
+                    return;
+                }
+            }
+        });
+        
+        // Handle keyboard navigation for tabs
+        document.addEventListener('keydown', function(e) {
+            if (e.target.closest('.tabs .tab')) {
+                const tab = e.target.closest('.tab');
+                
+                // Enter or Space triggers click
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    tab.click();
+                }
+                
+                // Arrow key navigation within tabs
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    const tabs = Array.from(tab.parentElement.querySelectorAll('.tab'));
+                    const currentIndex = tabs.indexOf(tab);
+                    let nextIndex;
+                    
+                    if (e.key === 'ArrowLeft') {
+                        nextIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
+                    } else {
+                        nextIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
+                    }
+                    
+                    const nextTab = tabs[nextIndex];
+                    if (nextTab) {
+                        nextTab.focus();
+                        nextTab.click();
+                    }
+                    
+                    e.preventDefault();
+                }
+            }
+        });
+        
+        console.log('✅ Event delegation setup complete');
+    }
+    
+    /**
      * Initialize application on page load
      */
     function initializeApp() {
         console.log('📱 Initializing app modules...');
+        
+        // Set up event delegation first
+        initializeEventDelegation();
         
         // Initialize charts on first load
         setTimeout(() => {
@@ -126,9 +256,12 @@
     /**
      * Initialize on page load
      */
-    window.addEventListener('load', () => {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+        // DOM already loaded
         initializeApp();
-    });
+    }
     
     /**
      * Export debug interface

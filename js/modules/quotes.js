@@ -295,26 +295,38 @@
         document.querySelectorAll('#quotes .tab').forEach(tab => tab.classList.remove('active'));
         
         let contentId = '';
+        let tabIndex = 0;
+        
         switch(tabName) {
             case 'new':
                 contentId = 'newQuoteTab';
+                tabIndex = 0;
                 break;
             case 'active':
                 contentId = 'activeQuoteTab';
+                tabIndex = 1;
                 renderActiveQuoteSection();
                 break;
             case 'past':
                 contentId = 'pastQuotesTab';
+                tabIndex = 2;
                 renderPastQuotesSection();
                 break;
             case 'templates':
                 contentId = 'templatesTab';
+                tabIndex = 3;
                 renderQuoteTemplatesSection();
                 break;
         }
         
+        // Activate the content
         document.getElementById(contentId)?.classList.add('active');
-        if (event?.target) event.target.classList.add('active');
+        
+        // Activate the corresponding tab button
+        const tabs = document.querySelectorAll('#quotes .tabs .tab');
+        if (tabs[tabIndex]) {
+            tabs[tabIndex].classList.add('active');
+        }
     }
     
     /**
