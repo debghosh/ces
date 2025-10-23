@@ -1,0 +1,30 @@
+# Node modules
+node_modules/
+
+# Test results
+test-results/
+playwright-report/
+playwright/.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Build artifacts
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Package lock (keep package-lock.json in real projects)
+# For solo dev, you can keep it
