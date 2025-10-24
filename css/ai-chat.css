@@ -1,4 +1,40 @@
 /* AI Chat Enhancements */
+
+/* Ensure chat message container doesn't clip avatar */
+.chat-message {
+  display: flex;
+  align-items: flex-start; /* NOT center - this cuts off overflow */
+  gap: 10px;
+  margin-bottom: 15px;
+  padding-top: 5px; /* Add space at top so avatar isn't clipped */
+  overflow: visible; /* CRITICAL - don't clip */
+}
+
+/* Avatar styling */
+.chat-message .avatar,
+.chat-message img.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0; /* Align with top of message */
+}
+
+/* Chat bubble */
+.chat-bubble {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  overflow-wrap: break-word;
+}
+
+/* Ensure parent container doesn't clip */
+#chatMessages {
+  overflow-y: auto;
+  overflow-x: visible; /* Don't clip horizontally */
+  padding: 10px; /* Add padding so content isn't flush with edges */
+}
+
 .ai-avatar {
     width: 56px;
     height: 56px;
