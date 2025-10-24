@@ -663,7 +663,6 @@ body {
     right: 30px;
     width: 400px;
     height: clamp(380px, calc(100vh - 160px), 640px);
-    max-height: calc(100vh - 120px);
     background: white;
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.2);
@@ -671,6 +670,7 @@ body {
     flex-direction: column;
     overflow: hidden;
     z-index: 1001;
+    bottom: calc(100px + env(safe-area-inset-bottom));
 }
 
 .chat-window.open {

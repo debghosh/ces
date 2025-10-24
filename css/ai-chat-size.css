@@ -1,0 +1,326 @@
+/* ==========================
+   AI CHAT WINDOW SIZE ADJUSTMENTS
+   Makes chat window larger for better AI conversation experience
+   Add this file to your project or copy styles to your main CSS
+   ========================== */
+
+/* Desktop - Larger chat window for AI conversations */
+@media (min-width: 769px) {
+    .chat-window {
+        width: 550px !important;  /* Increased from 400px */
+        height: calc(100vh - 140px) !important;  /* Taller - uses more screen */
+        max-height: 800px !important;  /* Maximum height cap */
+        min-height: 600px !important;  /* Minimum height */
+        bottom: 90px !important;
+        right: 30px !important;
+    }
+    
+    /* Adjust messages container for better readability */
+    .chat-messages, 
+    #chatMessages {
+        padding: 20px 24px !important;
+        font-size: 14px !important;
+        line-height: 1.6 !important;
+    }
+    
+    /* Make bubbles use more width */
+    .chat-bubble {
+        max-width: 85% !important;
+    }
+    
+    /* Scenario selector fits better */
+    .scenario-selector {
+        padding: 16px 20px !important;
+        gap: 10px !important;
+    }
+    
+    .scenario-btn {
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+    }
+}
+
+/* Large Desktop - Even more space for AI */
+@media (min-width: 1200px) {
+    .chat-window {
+        width: 650px !important;  /* Even wider on large screens */
+        max-height: 900px !important;
+    }
+}
+
+/* Tablet - Optimize for medium screens */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .chat-window {
+        width: 500px !important;
+        max-height: 700px !important;
+    }
+}
+
+/* Mobile - Full screen experience */
+@media (max-width: 768px) {
+    .chat-window {
+        width: 100% !important;
+        height: calc(100vh - 140px) !important;
+        max-height: none !important;
+        bottom: 70px !important;
+        right: 0 !important;
+        left: 0 !important;
+        top: auto !important;
+        border-radius: 20px 20px 0 0 !important;
+    }
+    
+    .chat-messages,
+    #chatMessages {
+        padding: 15px !important;
+    }
+    
+    /* Scenario selector stacks better on mobile */
+    .scenario-selector {
+        padding: 12px !important;
+        gap: 8px !important;
+        overflow-x: auto !important;
+        scrollbar-width: thin !important;
+    }
+    
+    .scenario-btn {
+        padding: 8px 12px !important;
+        font-size: 11px !important;
+        white-space: nowrap !important;
+    }
+    
+    /* Action cards 2-column on mobile */
+    .action-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Small Mobile - Adjust for very small screens */
+@media (max-width: 480px) {
+    .chat-window {
+        height: calc(100vh - 120px) !important;
+    }
+    
+    /* Single column action cards on very small screens */
+    .action-cards {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Improve scrolling experience */
+.chat-messages,
+#chatMessages {
+    scroll-behavior: smooth !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+/* Better scrollbar styling */
+.chat-messages::-webkit-scrollbar,
+#chatMessages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track,
+#chatMessages::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb,
+#chatMessages::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover,
+#chatMessages::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Firefox scrollbar */
+.chat-messages,
+#chatMessages {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+/* Ensure content isn't cut off at bottom */
+.chat-messages::after,
+#chatMessages::after {
+    content: '';
+    display: block;
+    height: 20px;
+}
+
+/* Animation for smoother experience */
+.chat-window {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.chat-window.open {
+    animation: slideUpChat 0.3s ease-out !important;
+}
+
+@keyframes slideUpChat {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Make chat input area more visible */
+.chat-input-area {
+    padding: 16px 20px !important;
+    border-top: 2px solid #e2e8f0 !important;
+    background: #ffffff !important;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+#chatInputField {
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+}
+
+#chatInputField:focus {
+    border-color: #667eea !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
+/* Improve recommendation cards layout */
+.recommendation-card {
+    margin: 12px 0 !important;
+}
+
+/* Better spacing for equipment items */
+.equipment-item {
+    margin-bottom: 8px !important;
+    padding: 12px !important;
+}
+
+/* Improve action card sizing */
+.action-card {
+    min-height: 100px !important;
+    padding: 14px !important;
+}
+
+.action-icon {
+    font-size: 28px !important;
+    margin-bottom: 8px !important;
+}
+
+/* Cost summary more prominent */
+.cost-summary {
+    padding: 18px !important;
+    margin: 16px 0 !important;
+}
+
+.cost-amount {
+    font-size: 32px !important;
+}
+
+/* Next steps clearer */
+.next-steps {
+    margin: 16px 0 !important;
+}
+
+/* Document grid better spacing */
+.documents-grid {
+    gap: 10px !important;
+}
+
+/* Comparison cards stack better */
+.comparison-options {
+    gap: 12px !important;
+}
+
+/* Info pills wrap better */
+.info-pill {
+    margin: 4px 6px 4px 0 !important;
+    padding: 6px 12px !important;
+}
+
+/* Ensure chat header is visible */
+.chat-header {
+    padding: 20px 24px !important;
+    min-height: 70px !important;
+}
+
+.chat-header h3 {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+}
+
+/* Make close button more visible */
+.chat-close {
+    font-size: 24px !important;
+    padding: 8px !important;
+    cursor: pointer !important;
+    opacity: 0.9 !important;
+    transition: opacity 0.2s !important;
+}
+
+.chat-close:hover {
+    opacity: 1 !important;
+}
+
+/* Improve overall readability */
+.chat-message {
+    margin-bottom: 20px !important;
+}
+
+.message-time {
+    margin-top: 6px !important;
+    font-size: 11px !important;
+}
+
+/* Better message bubbles */
+.chat-bubble {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    line-height: 1.5 !important;
+}
+
+.chat-bubble p {
+    margin-bottom: 10px !important;
+}
+
+.chat-bubble p:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* Thinking indicator more visible */
+.thinking-indicator {
+    padding: 14px 18px !important;
+    font-size: 13px !important;
+}
+
+/* Autonomous/clarification boxes better sized */
+.autonomous-action,
+.clarification-box,
+.approval-required {
+    padding: 14px 16px !important;
+    margin: 14px 0 !important;
+    line-height: 1.6 !important;
+}
+
+/* Print-friendly (in case someone wants to print quotes) */
+@media print {
+    .chat-window {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        box-shadow: none !important;
+    }
+    
+    .chat-bubble-btn,
+    .chat-close {
+        display: none !important;
+    }
+}

@@ -167,6 +167,12 @@
         if (document.getElementById('quotes')?.classList.contains('active')) {
             window.Quotes.renderQuotesPage();
         }
+
+        // Initialize AI Assistant if available
+        if (typeof window.AIAssistant !== 'undefined') {
+            window.AIAssistant.init();
+            console.log('✅ AI Assistant initialized');
+        }
         
         console.log('✅ App initialization complete');
     }
